@@ -1,0 +1,114 @@
+﻿
+<<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<meta charset="utf-8" />
+		<meta name="author" content="www.frebsite.nl" />
+		<meta name="viewport" content="width=device-width initial-scale=1.0 maximum-scale=1.0 user-scalable=yes" />
+
+		<title>jQuery.mmenu - Demo</title>
+
+		<link type="text/css" rel="stylesheet" href="css/menuDemo.css?v=" />
+		<link type="text/css" rel="stylesheet" href="css/jquery.mmenu.all.css?v=" />
+		<link type="text/css" rel="stylesheet" href="css/font-awesome.min.css" />
+		<style type="text/css">
+			.content {
+				padding-top: 0;
+				background-position: 35px 55px;
+			}
+			#intro,
+			#first,
+			#second,
+			#third {
+				height: 350px;
+				padding-top: 190px;
+			}
+			#first,
+			#second,
+			#third {
+				border-top: 1px solid #ccc;
+			}
+			.mm-menu {
+				box-shadow: 0 0 40px rgba( 0, 0, 0, 0.2 );
+			}
+		</style>
+
+		<script type="text/javascript" src="js/jquery-1.8.3.min.js"></script>
+		<script type="text/javascript" src="js/jquery.mmenu.all.min.js?v="></script>
+		<script type="text/javascript">
+			$(function() {
+				var $menu = $('nav#menu'),
+					$html = $('html, body');
+
+				$menu.mmenu({
+					extensions 	: [ "pageshadow" ],
+					offCanvas	: {
+						position 	: "bottom",
+						zposition	: "front"
+					},
+					navbar 		: {
+						title 		: "VitalCard Menu"
+					}
+				});
+
+				var API = $menu.data( "mmenu" );
+				API.setSelected( $menu.find( "li" ).first() );
+
+				var closer = null;
+
+				$menu.find( 'a' ).on( 'click', function() {
+					closer = $(this).attr( "href" );
+				});
+
+				API.bind( "closed", function() {
+					if ( closer ) {
+						setTimeout( function() {
+							$html.animate({
+								scrollTop: $(closer).offset().top
+							});	
+							closer = null;
+						}, 25 );
+					}	
+				});
+			});
+		</script>
+	</head>
+	<body>
+		<div id="page">
+			<div class="header Fixed">
+				<a href="#menu"></a>
+				Demo
+			</div>
+			<div class="content">
+				<div id="intro">					
+					<p><strong>Questa è la demo dell'app VitalCard.</strong><br />
+						Click sull'icona del menu per aprire la demo.</p>
+					
+					<p>Ogni voce del menu' rimanda ad una sezione della stessa pagina, con un effetto di scorrimento molto piacevole.</p>
+				</div>
+				<div id="first">
+					<p><strong>Prima Sezione : Anagrafica.</strong><br />
+						Notice how the fixed header slides out along with the page.</p>
+
+					<p><a href="#menu">Ritorna al menu.</a></p>
+				</div>
+				<div id="second">
+					<p><strong>Seconda Sezione : ANAMNESI.</strong><br />
+						<a href="#menu">Ritorna al menu.</a></p>
+				</div>
+				<div id="third">
+					<p><strong>Terza Sezione : UTILITA'.</strong><br />
+						<a href="#menu">Ritorna al menu.</a></p>
+				</div>
+			</div>
+		</div>
+		<nav id="menu">
+			<ul>
+				<li><a href="#intro">Intro</a></li>
+				<li><a href="#first">Prima Sezione : ANAGRAFICA</a></li>
+				<li><a href="#second">Seconda Sezione : ANAMNESI</a></li>
+				<li><a href="#third">Terza Sezione : UTILITA'</a></li>
+			</ul>
+		</nav>
+	</body>
+</html>
