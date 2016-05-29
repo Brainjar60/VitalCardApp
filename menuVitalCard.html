@@ -6,7 +6,7 @@
 		<meta name="author" content="www.frebsite.nl" />
 		<meta name="viewport" content="width=device-width initial-scale=1.0 maximum-scale=1.0 user-scalable=yes" />
 
-		<title>jQuery.mmenu - Demo</title>
+		<title>VitalCard App - Demo</title>
 
 		<link type="text/css" rel="stylesheet" href="css/menuDemo.css?v=" />
 		<link type="text/css" rel="stylesheet" href="css/jquery.mmenu.all.css?v=" />
@@ -19,18 +19,30 @@
 			#intro,
 			#first,
 			#second,
+			#fourth,
+			#fifth,
 			#third {
 				height: 350px;
 				padding-top: 190px;
 			}
 			#first,
 			#second,
+			#fourth,
+			#fifth,
 			#third {
 				border-top: 1px solid #ccc;
 			}
 			.mm-menu {
 				box-shadow: 0 0 40px rgba( 0, 0, 0, 0.2 );
 			}
+			.menuItemPage {
+                background-color: #FFDFDD;
+                color: Blue;
+            }
+			.menuItemTitle {
+                background-color: #E0B0FF;
+                color: #E42217;
+            }
 		</style>
 
 		<script type="text/javascript" src="js/jquery-1.8.3.min.js"></script>
@@ -77,37 +89,71 @@
 		<div id="page">
 			<div class="header Fixed">
 				<a href="#menu"></a>
-				Demo
-			</div>
-			<div class="content">
-				<div id="intro">					
+	            VitalCARD Android DEMO
+		    </div>
+			<div class="content menuItemPage">
+				<div id="intro" class="menuItemInfo">					
 					<p><strong>Questa è la demo dell'app VitalCard.</strong><br />
 						Click sull'icona del menu per aprire la demo.</p>
 					
 					<p>Ogni voce del menu' rimanda ad una sezione della stessa pagina, con un effetto di scorrimento molto piacevole.</p>
 				</div>
 				<div id="first">
-					<p><strong>Prima Sezione : Anagrafica.</strong><br />
-						Notice how the fixed header slides out along with the page.</p>
-
-					<p><a href="#menu">Ritorna al menu.</a></p>
+					<p><strong>Dati Personali</strong><br /></p>
+                        <table>
+                            <tr>
+                              <td>Foto </td>
+                              <td><img src="img/Vito_Perrotta.jpg"/></td>
+                            </tr>
+                            <tr>
+                              <td>Cognome </td>
+                              <td>PERROTTA</td>
+                            </tr>
+                            <tr>
+                              <td>Nome</td>
+                              <td>VITO</td>
+                            </tr>
+                            <tr>
+                              <td>Nato a</td>
+                              <td>NAPOLI NA</td>
+                            </tr>
+                            <tr>
+                              <td>Nato il</td>
+                              <td>6 Agosto 1960</td>
+                            </tr>
+                            <tr>
+                              <td>Gruppo sanguigno</td>
+                              <td>RH +</td>
+                            </tr>
+                        </table>
+					    <p><a href="#menu">Ritorna al menu.</a></p>
 				</div>
 				<div id="second">
-					<p><strong>Seconda Sezione : ANAMNESI.</strong><br />
+					<p><strong>Malattie</strong><br />
 						<a href="#menu">Ritorna al menu.</a></p>
 				</div>
 				<div id="third">
-					<p><strong>Terza Sezione : UTILITA'.</strong><br />
+					<p><strong>Patologie in atto</strong><br />
 						<a href="#menu">Ritorna al menu.</a></p>
 				</div>
-			</div>
+				<div id="fourth">
+					<p><strong>Allergie</strong><br />
+						<a href="#menu">Ritorna al menu.</a></p>
+				</div>
+				<div id="fifth">
+					<p><strong>Trattamenti non accettati</strong><br />
+						<a href="#menu">Ritorna al menu.</a></p>
+				</div>
+  			</div>
 		</div>
-		<nav id="menu">
+		<nav id="menu" class="menuItemTitle">
 			<ul>
 				<li><a href="#intro">Intro</a></li>
-				<li><a href="#first">Prima Sezione : ANAGRAFICA</a></li>
-				<li><a href="#second">Seconda Sezione : ANAMNESI</a></li>
-				<li><a href="#third">Terza Sezione : UTILITA'</a></li>
+				<li><a href="#first">Dati Personali</a></li>
+				<li><a href="#second">Malattie</a></li>
+				<li><a href="#third">Patologie in atto</a></li>
+				<li><a href="#fourth">Allergie</a></li>
+				<li><a href="#fifth">Trattamenti non accettati</a></li>
 			</ul>
 		</nav>
 	</body>
