@@ -47,6 +47,8 @@
 
 		<script type="text/javascript" src="js/jquery-1.8.3.min.js"></script>
 		<script type="text/javascript" src="js/jquery.mmenu.all.min.js?v="></script>
+        <!--script type="text/javascript" src="js/jquery-1.9.1.js"></script-->
+        <!--script type="text/javascript" src="js/jquery-ui-1.10.3.custom.js"></script-->
 		<script type="text/javascript">
 			$(function() {
 				var $menu = $('nav#menu'),
@@ -82,7 +84,58 @@
 						}, 25 );
 					}	
 				});
-			});
+            });
+
+            function goToCF() {
+
+                var cognome = document.getElementById("txtCognome").value;
+                var nome = document.getElementById("txtNome").value;
+                var sesso = document.getElementById("txtSesso").value;
+                var data = document.getElementById("txtData").value;
+                var luogo = document.getElementById("txtLuogo").value;
+                var provincia = document.getElementById("txtProvincia").value;
+                // callCreaCF(cognome, nome, sesso, data, luogo, provincia
+                //ajaxCallCF(cognome, nome, sesso, data, luogo, provincia);
+                callHandler(); 
+            }
+
+            function ajaxCallCF(cognome, nome, sesso, data, luogo, provincia) {
+                alert(cognome + ' ' + nome + ' ' + sesso + ' ' + data + ' ' + luogo + ' ' + provincia);
+                $.ajax({
+                    crossDomain: true,
+                    contentType: "application/json; charset=utf-8",
+                    url: "http://localhost:1464/CF.aspx/creaCF",
+                    data: "{ cognome: '" + cognome + "', nome: '" + nome + "', sesso: '" + sesso + "', data: '" + data + "', luogo: '" + luogo + "', provincia: '" + provincia + "'}",
+                    dataType: "jsonp",
+                    success: showCF,
+                }).done(
+                    // nothing 
+                );
+
+            }
+            function showCF(res) {
+                alert(res); 
+                var cf = document.getElementById("txtCF");
+                cf.value = res.d;
+            }
+            function jsonp_callback(res) {
+                //alert(res);
+                var cf = document.getElementById("txtCF");
+                cf.value = res;
+            }
+            function callHandler() {
+                var cognome = document.getElementById("txtCognome").value;
+                var nome = document.getElementById("txtNome").value;
+                var sesso = document.getElementById("txtSesso").value;
+                var data = document.getElementById("txtData").value;
+                var luogo = document.getElementById("txtLuogo").value;
+                var provincia = document.getElementById("txtProvincia").value;
+                $.ajax({
+                    dataType: 'jsonp',
+                    jsonpCallback: 'jsonp_callback',
+                    url: 'http://localhost:1464/TestService.ashx?callback=?&cognome='+ cognome + '&nome=' + nome + '&sesso=' + sesso + '&data=' + data + '&luogo='+ luogo + '&provincia='+ provincia,
+                });
+            }
 		</script>
 	</head>
 	<body>
@@ -129,8 +182,28 @@
 					    <p><a href="#menu">Ritorna al menu.</a></p>
 				</div>
 				<div id="second">
-					<p><strong>Malattie</strong><br />
-						<a href="#menu">Ritorna al menu.</a></p>
+					<p><strong>Malattie</strong><br /></p>
+                            <table>
+                                <tr>
+                                    <td>Cognome</td><td><input type="text" id="txtCognome" value='perrotta' /></td>
+                                </tr><tr>
+                                    <td>Nome</td><td><input type="text" id="txtNome" value='vito' /></td>
+                                </tr><tr>
+                                    <td>Sesso</td><td><input type="text" id="txtSesso" value='m'/></td>
+                                </tr><tr>
+                                    <td>Nato/a a</td><td><input type="text" id="txtLuogo" value='napoli'/></td>
+                                    <td>Provincia</td><td><input type="text" id="txtProvincia" value='na'/></td>
+                                </tr><tr>
+                                    <td>Nato/a il</td><td><input type="text" id="txtData" value='06/08/1960'/></td>
+                                </tr><tr>
+                                    <td>&nbsp;</td><td><input type="button" value="Calcola CF " onclick="goToCF();"/></td>
+                                </tr><tr>
+                                    <td>&nbsp;</td><td><input type="button" value="Reset" onclick="_reset();"/></td>
+                                </tr><tr>
+                                    <td>Codice Fiscale</td><td><input type="text" id="txtCF"/></td>
+                                </tr>
+                            </table>
+						<p><a href="#menu">Ritorna al menu.</a></p>
 				</div>
 				<div id="third">
 					<p><strong>Patologie in atto</strong><br />
