@@ -18,5 +18,6 @@
     </author>
 	<gap:platform name="android" />
 	<gap:platform name="winphone" />
-	<access origin="http://www.atvinformatica.it" subdomains="true" />
+	<access origin="*" />
+	
 </widget>
