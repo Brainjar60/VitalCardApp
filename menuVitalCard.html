@@ -64,7 +64,12 @@
 						title 		: "VitalCard Menu"
 					}
 				});
-
+                var codPaziente = window.localStorage.getItem("codPaziente");
+                if (codPaziente) {
+                     var codicePaziente = document.getElementById("codPaziente");
+                     codicePaziente.value = codPaziente;
+                     getDatiPaziente();
+                }
 				var API = $menu.data( "mmenu" );
 				API.setSelected( $menu.find( "li" ).first() );
 
@@ -126,7 +131,7 @@
                 cf.value = res;
             }
             function jsonp_callbackCP(res) {
-                alert(res);
+                //alert(res);
                 var dati = res.split("||");
                 var dp = document.getElementById("divDatiPersonali");
                 dp.innerHTML = dati[0];
@@ -135,6 +140,7 @@
             }
             function getDatiPaziente() {
                 var codicePaziente = document.getElementById("codPaziente").value;
+                window.localStorage.setItem('codPaziente', codicePaziente); 
                 $.ajax({
                     dataType: 'jsonp',
                     jsonpCallback: 'jsonp_callbackCP',
