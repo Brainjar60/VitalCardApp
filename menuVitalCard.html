@@ -90,8 +90,8 @@
 					}	
 				});
             });
-            // var host = "localhost:1464"; 
-            var host = "www.atvinformatica.it"; 
+            var host = "localhost:1464"; 
+            // var host = "www.atvinformatica.it"; 
 
             function goToCF() {
 
@@ -137,6 +137,36 @@
                 dp.innerHTML = dati[0];
                 var dm = document.getElementById("divDatiMalattie");
                 dm.innerHTML = dati[1];
+                var df = document.getElementById("imgDatiPaziente");
+                alert(dati[2]);
+                df.src = 'http://' + host + '/img/' + dati[2];
+                saveImagePaziente(); 
+            }
+            function saveImagePaziente() {
+                var codicePaziente = document.getElementById("codPaziente");
+                var url = 'http://' + host + '/img/' + codicePaziente + '.jpg' ;
+                var filePath = 'img/' + codicePaziente + '.jpg' ;
+                var fileTransfer = new FileTransfer();
+                var uri = encodeURI(url);
+
+                fileTransfer.download(
+                    uri,
+                    filePath,
+                    function(entry) {
+                        console.log("download complete: " + entry.fullPath);
+                    },
+                    function(error) {
+                        console.log("download error source " + error.source);
+                        console.log("download error target " + error.target);
+                        console.log("upload error code" + error.code);
+                    },
+                    false,
+                    {
+                        headers: {
+                            "Authorization": "Basic dGVzdHVzZXJuYW1lOnRlc3RwYXNzd29yZA=="
+                        }
+                    }
+                );
             }
             function getDatiPaziente() {
                 var codicePaziente = document.getElementById("codPaziente").value;
@@ -177,6 +207,12 @@
 				</div>
 				<div id="first">
 					<p><strong>Dati Personali</strong><br /></p>
+                        <div id="divFotoPersonale">
+                            <table>
+                                <tr>
+                                    <td><img id="imgDatiPaziente" src=""/></td>
+                                </tr>
+                            </table>
                         <div id="divDatiPersonali">
                         <!--
                         <table>
