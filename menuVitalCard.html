@@ -1,4 +1,4 @@
-﻿
+?
 <<!DOCTYPE html>
 <html lang="en">
 	<head>
@@ -85,6 +85,8 @@
 					}	
 				});
             });
+            // var host = "localhost:1464"; 
+            var host = "www.atvinformatica.it"; 
 
             function goToCF() {
 
@@ -100,11 +102,11 @@
             }
 
             function ajaxCallCF(cognome, nome, sesso, data, luogo, provincia) {
-                alert(cognome + ' ' + nome + ' ' + sesso + ' ' + data + ' ' + luogo + ' ' + provincia);
+                //alert(cognome + ' ' + nome + ' ' + sesso + ' ' + data + ' ' + luogo + ' ' + provincia);
                 $.ajax({
                     crossDomain: true,
                     contentType: "application/json; charset=utf-8",
-                    url: "http://localhost:1464/CF.aspx/creaCF",
+                    url: "http://" + host + "/CF.aspx/creaCF",
                     data: "{ cognome: '" + cognome + "', nome: '" + nome + "', sesso: '" + sesso + "', data: '" + data + "', luogo: '" + luogo + "', provincia: '" + provincia + "'}",
                     dataType: "jsonp",
                     success: showCF,
@@ -114,7 +116,7 @@
 
             }
             function showCF(res) {
-                alert(res); 
+                //alert(res); 
                 var cf = document.getElementById("txtCF");
                 cf.value = res.d;
             }
@@ -122,6 +124,22 @@
                 //alert(res);
                 var cf = document.getElementById("txtCF");
                 cf.value = res;
+            }
+            function jsonp_callbackCP(res) {
+                alert(res);
+                var dati = res.split("||");
+                var dp = document.getElementById("divDatiPersonali");
+                dp.innerHTML = dati[0];
+                var dm = document.getElementById("divDatiMalattie");
+                dm.innerHTML = dati[1];
+            }
+            function getDatiPaziente() {
+                var codicePaziente = document.getElementById("codPaziente").value;
+                $.ajax({
+                    dataType: 'jsonp',
+                    jsonpCallback: 'jsonp_callbackCP',
+                    url: 'http://' + host + '/TestServicePaziente.ashx?callback=?&codicePaziente='+ codicePaziente,
+                });
             }
             function callHandler() {
                 var cognome = document.getElementById("txtCognome").value;
@@ -133,7 +151,7 @@
                 $.ajax({
                     dataType: 'jsonp',
                     jsonpCallback: 'jsonp_callback',
-                    url: 'http://www.atvinformatica.it/TestService.ashx?callback=?&cognome='+ cognome + '&nome=' + nome + '&sesso=' + sesso + '&data=' + data + '&luogo='+ luogo + '&provincia='+ provincia,
+                    url: 'http://' + host + '/TestService.ashx?callback=?&cognome='+ cognome + '&nome=' + nome + '&sesso=' + sesso + '&data=' + data + '&luogo='+ luogo + '&provincia='+ provincia,
                 });
             }
 		</script>
@@ -153,36 +171,53 @@
 				</div>
 				<div id="first">
 					<p><strong>Dati Personali</strong><br /></p>
+                        <div id="divDatiPersonali">
+                        <!--
                         <table>
                             <tr>
                               <td>Foto </td>
-                              <td><img src="img/Vito_Perrotta.jpg"/></td>
+                              <td><img src=""/></td>
                             </tr>
                             <tr>
                               <td>Cognome </td>
-                              <td>PERROTTA</td>
+                              <td id="pazCogn"></td>
                             </tr>
                             <tr>
                               <td>Nome</td>
-                              <td>VITO</td>
+                              <td id="pazNome"></td>
                             </tr>
                             <tr>
                               <td>Nato a</td>
-                              <td>NAPOLI NA</td>
+                              <td id="pazLuogo"></td>
                             </tr>
                             <tr>
                               <td>Nato il</td>
-                              <td>6 Agosto 1960</td>
+                              <td id="pazData"></td>
                             </tr>
                             <tr>
                               <td>Gruppo sanguigno</td>
-                              <td>RH +</td>
+                              <td id="pazGrp"></td>
                             </tr>
                         </table>
+                        -->
+                        </div>
+                        <table>
+                            <tr>
+                              <td>Codice paziente</td>
+                              <td><input type="text" id="codPaziente" value=""/></td>
+                            </tr>
+                            <tr>
+                              <td>Riarica dati</td>
+                              <td><input type="button" value="Ricarica" onclick="getDatiPaziente();"/></td>
+                            </tr>
+                        </table>
+                       
 					    <p><a href="#menu">Ritorna al menu.</a></p>
 				</div>
 				<div id="second">
 					<p><strong>Malattie</strong><br /></p>
+                            <div id="divDatiMalattie">
+                            <!--
                             <table>
                                 <tr>
                                     <td>Cognome</td><td><input type="text" id="txtCognome" value='perrotta' /></td>
@@ -192,7 +227,7 @@
                                     <td>Sesso</td><td><input type="text" id="txtSesso" value='m'/></td>
                                 </tr><tr>
                                     <td>Nato/a a</td><td><input type="text" id="txtLuogo" value='napoli'/></td>
-                                </tr><tr>
+								</tr><tr>
                                     <td>Provincia</td><td><input type="text" id="txtProvincia" value='na'/></td>
                                 </tr><tr>
                                     <td>Nato/a il</td><td><input type="text" id="txtData" value='06/08/1960'/></td>
@@ -204,6 +239,8 @@
                                     <td>Codice Fiscale</td><td><input type="text" id="txtCF"/></td>
                                 </tr>
                             </table>
+                            -->
+                            </div>
 						<p><a href="#menu">Ritorna al menu.</a></p>
 				</div>
 				<div id="third">
