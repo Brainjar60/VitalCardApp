@@ -89,7 +89,7 @@
 					}	
 				});
             });
-            //var host = "localhost:1464"; 
+            // var host = "localhost:1464"; 
             var host = "www.atvinformatica.it"; 
 
             function goToCF() {
@@ -204,58 +204,33 @@
 					
 					<p>Ogni voce del menu' rimanda ad una sezione della stessa pagina, con un effetto di scorrimento molto piacevole.</p>
 				</div>
-				<div id="first">
+				<div id="first" class="menuItemInfo">
 					<p><strong>Dati Personali</strong><br /></p>
                         <div id="divFotoPersonale">
                             <table>
                                 <tr>
                                     <td><img id="imgDatiPaziente" src=""/></td>
-                                </tr>
+									<td>
+										<table>
+											<tr>
+												<td>Codice paziente</td>
+											<tr>
+											</tr>
+												<td><input type="text" id="codPaziente" value=""/></td>
+											</tr>
+											<tr>
+											  <td><input type="button" value="Ricarica" onclick="getDatiPaziente();"/></td>
+											</tr>
+										</table>
+									</td>
+								</tr>
                             </table>
+						</div> 
                         <div id="divDatiPersonali">
-                        <!--
-                        <table>
-                            <tr>
-                              <td>Foto </td>
-                              <td><img src=""/></td>
-                            </tr>
-                            <tr>
-                              <td>Cognome </td>
-                              <td id="pazCogn"></td>
-                            </tr>
-                            <tr>
-                              <td>Nome</td>
-                              <td id="pazNome"></td>
-                            </tr>
-                            <tr>
-                              <td>Nato a</td>
-                              <td id="pazLuogo"></td>
-                            </tr>
-                            <tr>
-                              <td>Nato il</td>
-                              <td id="pazData"></td>
-                            </tr>
-                            <tr>
-                              <td>Gruppo sanguigno</td>
-                              <td id="pazGrp"></td>
-                            </tr>
-                        </table>
-                        -->
-                        </div>
-                        <table>
-                            <tr>
-                              <td>Codice paziente</td>
-                              <td><input type="text" id="codPaziente" value=""/></td>
-                            </tr>
-                            <tr>
-                              <td>Riarica dati</td>
-                              <td><input type="button" value="Ricarica" onclick="getDatiPaziente();"/></td>
-                            </tr>
-                        </table>
-                       
+                        </div>                       
 					    <p><a href="#menu">Ritorna al menu.</a></p>
 				</div>
-				<div id="second">
+				<div id="second" class="menuItemInfo">
 					<p><strong>Malattie</strong><br /></p>
                             <div id="divDatiMalattie">
                             <!--
@@ -284,15 +259,15 @@
                             </div>
 						<p><a href="#menu">Ritorna al menu.</a></p>
 				</div>
-				<div id="third">
+				<div id="third" class="menuItemInfo">
 					<p><strong>Patologie in atto</strong><br />
 						<a href="#menu">Ritorna al menu.</a></p>
 				</div>
-				<div id="fourth">
+				<div id="fourth" class="menuItemInfo">
 					<p><strong>Allergie</strong><br />
 						<a href="#menu">Ritorna al menu.</a></p>
 				</div>
-				<div id="fifth">
+				<div id="fifth" class="menuItemInfo">
 					<p><strong>Trattamenti non accettati</strong><br />
 						<a href="#menu">Ritorna al menu.</a></p>
 				</div>
