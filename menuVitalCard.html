@@ -46,6 +46,7 @@
 
 		<script type="text/javascript" src="js/jquery-1.8.3.min.js"></script>
 		<script type="text/javascript" src="js/jquery.mmenu.all.min.js?v="></script>
+		<script type="text/javascript" src="js/jquery.imageCaching.js"></script>
         <!--script type="text/javascript" src="js/jquery-1.9.1.js"></script-->
         <!--script type="text/javascript" src="js/jquery-ui-1.10.3.custom.js"></script-->
 		<script type="text/javascript">
@@ -63,12 +64,25 @@
 						title 		: "VitalCard Menu"
 					}
 				});
-                var codPaziente = window.localStorage.getItem("codPaziente");
+                var codPaziente = window.localStorage.getItem('codPaziente'); 
+                var imgPaziente = window.localStorage.getItem("imgPaziente");
+                var datPaziente = window.localStorage.getItem("datiPersonali");
+                var datMalattie = window.localStorage.getItem("datiMalattie");
                 if (codPaziente) {
                      var codicePaziente = document.getElementById("codPaziente");
                      codicePaziente.value = codPaziente;
-                     getDatiPaziente();
                 }
+				if (imgPaziente) {
+					getImagePaziente();
+				}
+				if (datPaziente) {
+				    var dp = document.getElementById("divDatiPersonali");
+                    dp.innerHTML = datPaziente;
+				}
+				if (datMalattie) {
+				   	var dm = document.getElementById("divDatiMalattie");
+                	dm.innerHTML = datMalattie;
+				}
 				var API = $menu.data( "mmenu" );
 				API.setSelected( $menu.find( "li" ).first() );
 
@@ -89,8 +103,8 @@
 					}	
 				});
             });
-            // var host = "localhost:1464"; 
-            var host = "www.atvinformatica.it"; 
+            var host = "localhost:1464"; 
+            //var host = "www.atvinformatica.it"; 
 
             function goToCF() {
 
@@ -133,13 +147,35 @@
                 //alert(res);
                 var dati = res.split("||");
                 var dp = document.getElementById("divDatiPersonali");
+				//alert(dati[0]); 
                 dp.innerHTML = dati[0];
+				localStorage.setItem("datiPersonali", dati[0]);
                 var dm = document.getElementById("divDatiMalattie");
                 dm.innerHTML = dati[1];
+				localStorage.setItem("datiMalattie", dati[1]);
                 var df = document.getElementById("imgDatiPaziente");
-                //alert(dati[2]);
-                df.src = 'http://' + host + '/img/' + dati[2];
-                //saveImagePaziente(); 
+                df.src = "data:image/jpg;base64," + dati[2]; 
+				localStorage.setItem("imgPaziente", dati[2]);
+            }
+            function getImagePaziente() {
+                var dataImage = localStorage.getItem('imgPaziente');
+                var bannerImg = document.getElementById('imgDatiPaziente');
+                bannerImg.src = "data:image/jpg;base64," + dataImage;
+            }
+            function saveImage(dfSrc) {
+                localStorage.setItem("imgPaziente", imgData);
+			}
+            function getBase64Image(img) {
+                var canvas = document.createElement("canvas");
+                canvas.width = img.width;
+                canvas.height = img.height;
+
+                var ctx = canvas.getContext("2d");
+                ctx.drawImage(img, 0, 0);
+
+                var dataURL = canvas.toDataURL("image/jpg");
+
+                return dataURL.replace(/^data:image\/(png|jpg);base64,/, "");
             }
             function saveImagePaziente() {
                 var codicePaziente = document.getElementById("codPaziente");
@@ -226,36 +262,12 @@
 								</tr>
                             </table>
 						</div> 
-                        <div id="divDatiPersonali">
-                        </div>                       
+                        <div id="divDatiPersonali"></div>                       
 					    <p><a href="#menu">Ritorna al menu.</a></p>
 				</div>
 				<div id="second" class="menuItemInfo">
 					<p><strong>Malattie</strong><br /></p>
                             <div id="divDatiMalattie">
-                            <!--
-                            <table>
-                                <tr>
-                                    <td>Cognome</td><td><input type="text" id="txtCognome" value='perrotta' /></td>
-                                </tr><tr>
-                                    <td>Nome</td><td><input type="text" id="txtNome" value='vito' /></td>
-                                </tr><tr>
-                                    <td>Sesso</td><td><input type="text" id="txtSesso" value='m'/></td>
-                                </tr><tr>
-                                    <td>Nato/a a</td><td><input type="text" id="txtLuogo" value='napoli'/></td>
-								</tr><tr>
-                                    <td>Provincia</td><td><input type="text" id="txtProvincia" value='na'/></td>
-                                </tr><tr>
-                                    <td>Nato/a il</td><td><input type="text" id="txtData" value='06/08/1960'/></td>
-                                </tr><tr>
-                                    <td>&nbsp;</td><td><input type="button" value="Calcola CF " onclick="goToCF();"/></td>
-                                </tr><tr>
-                                    <td>&nbsp;</td><td><input type="button" value="Reset" onclick="_reset();"/></td>
-                                </tr><tr>
-                                    <td>Codice Fiscale</td><td><input type="text" id="txtCF"/></td>
-                                </tr>
-                            </table>
-                            -->
                             </div>
 						<p><a href="#menu">Ritorna al menu.</a></p>
 				</div>
