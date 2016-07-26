@@ -1,4 +1,3 @@
-<<!DOCTYPE html>
 <html lang="en">
 	<head>
 		<meta charset="utf-8" />
@@ -103,6 +102,7 @@
 					}	
 				});
             });
+			var blProvaHost = true; 
             //var host = "localhost:1464"; 
             var host = "www.atvinformatica.it"; 
 
@@ -126,7 +126,7 @@
                     contentType: "application/json; charset=utf-8",
                     url: "http://" + host + "/CF.aspx/creaCF",
                     data: "{ cognome: '" + cognome + "', nome: '" + nome + "', sesso: '" + sesso + "', data: '" + data + "', luogo: '" + luogo + "', provincia: '" + provincia + "'}",
-                    dataType: "jsonp",
+                    dataType: "json",
                     success: showCF,
                 }).done(
                     // nothing 
@@ -147,7 +147,6 @@
                 //alert(res);
                 var dati = res.split("||");
                 var dp = document.getElementById("divDatiPersonali");
-				//alert(dati[0]); 
                 dp.innerHTML = dati[0];
 				localStorage.setItem("datiPersonali", dati[0]);
                 var dm = document.getElementById("divDatiMalattie");
@@ -203,7 +202,38 @@
                     }
                 );
             }
+			function showPAZ(res) {
+                var dati = res.d.split("||");
+                var dp = document.getElementById("divDatiPersonali");
+                dp.innerHTML = dati[0];
+				localStorage.setItem("datiPersonali", dati[0]);
+                var dm = document.getElementById("divDatiMalattie");
+                dm.innerHTML = dati[1];
+				localStorage.setItem("datiMalattie", dati[1]);
+                var df = document.getElementById("imgDatiPaziente");
+                df.src = "data:image/jpg;base64," + dati[2]; 
+				localStorage.setItem("imgPaziente", dati[2]);
+			}
+			function getDatiPazienteNCB() {
+			    var codicePaziente = document.getElementById("codPaziente").value;
+                window.localStorage.setItem('codPaziente', codicePaziente);
+    			$.ajax({
+                        crossDomain: true,
+                        contentType: "application/json; charset=utf-8",
+                        url: "http://" + host + "/TestServicePaziente.ashx?codicePaziente=" + codicePaziente,
+                        dataType: "json",
+                        success: showPAZ,
+                    }).done(
+                        // nothing 
+                    );
+			}
             function getDatiPaziente() {
+				/*	 
+			    if (host == "www.atvinformatica.it" || blProvaHost==true) {
+				   getDatiPazienteNCB();
+				   return;
+				}	
+				*/	 
                 var codicePaziente = document.getElementById("codPaziente").value;
                 window.localStorage.setItem('codPaziente', codicePaziente); 
                 $.ajax({
