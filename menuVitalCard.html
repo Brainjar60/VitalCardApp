@@ -229,8 +229,12 @@
                 });
             }
 			var icont = 0;
+			var panels = new Array("","divDatiMalattie","divDatiPatologie","divDatiAllergie","divDatiTrattamenti");
+			var actions = new Array("","azioni_malattie","azioni_patologie","azioni_allergie","azioni_trattamenti");
+			var edits = new Array("","divEditaMalattia","divEditaPatologia","divEditaAllergia","divEditaTrattamento");
 			function clickRef(actn, cntx)
 	        {
+			    setDati(0); 
 			    icont = cntx;
 				var contesto = ""; 
 				if (cntx == 1) contesto = "Malattie"; 
@@ -239,40 +243,53 @@
 				if (cntx == 4) contesto = "Trattamenti non accettati"; 
 			    switch (actn) {
 					   case  1:
-					       if (cntx == 1) { 
-								document.getElementById("divDatiMalattie").style.display = "none"; 
-								document.getElementById("azioni_malattie").style.display = "none"; 
-								document.getElementById("divEditaMalattia").innerHTML = editaElemento("") ; 
-								$("#dataDal").datepicker({changeMonth: true, changeYear: true, maxDate: '+1Y', minDate: '-100Y', yearRange: '-100:+1'});
-								$("#dataAl").datepicker({changeMonth: true, changeYear: true, maxDate: '+1Y', minDate: '-100Y', yearRange: '-100:+1'});
-								document.getElementById("divEditaMalattia").style.display = "block"; 
-
-						   }
-						   break;
+							document.getElementById(panels[cntx]).style.display = "none"; 
+							document.getElementById(actions[cntx]).style.display = "none"; 
+							document.getElementById(edits[cntx]).innerHTML = editaElemento("") ; 
+							$("#dataDal").datepicker({changeMonth: true, changeYear: true, maxDate: '+1Y', minDate: '-100Y', yearRange: '-100:+1'});
+							$("#dataAl").datepicker({changeMonth: true, changeYear: true, maxDate: '+1Y', minDate: '-100Y', yearRange: '-100:+1'});
+						    document.getElementById(edits[cntx]).style.display = "block"; 
+						    break;
 					   case  2:
-					       alert("Clicked on delete button for " + contesto); 
 						   break;	
 					   case  3:
-					       alert("Clicked on edit button for " + contesto); 
 						   break;
 					   default:
 						   break;					   						   				   
 				}		 
 			}
+			var selectedRow = ""; 
 			// -------------------------------------------
 			var array = [1,2,3,4,5,6,7,8,1,2,3,4,5,6,7,8];
 			var count = 0;
 			var totalCells = 4;
 			// -------------------------------------------
+			function select(cella) {
+				if (!cella) return; 
+				var idx = cella.id.substring(0,cella.id.indexOf('_c'));
+				var rigaOld = document.getElementById(selectedRow); 
+				var riga = document.getElementById(idx); 
+				if (!riga) return;
+				if (rigaOld) rigaOld.style = "border: 1px solid #000;" 
+				if (selectedRow!=idx) {
+				  // seleziona la riga ..... 
+				  riga.style = "color: #00f; background-color: #0ff; border: 5px solid #00f;"
+				  selectedRow = idx;
+				} 
+			}
 			function writeTable() {
 				// cache <tbody> element:
 				var tbody = $('#bodyM');
 				for (var i = 0; i < array.length / 8; i++) {
 					// create an <tr> element, append it to the <tbody> and cache it as a variable:
-					var tr = $('<tr/>').appendTo(tbody);
+					var tr = $('<tr id=\"tdM_r' + i + '\"/>').appendTo(tbody);
 					for (var j = 0; j < totalCells; j++) {
 						// append <td> elements to previously created <tr> element:
-						tr.append('<td>' + array[count] + '</td>');
+						if (j==0) {
+						  tr.append('<td id=\"tdM_r' + i + '_c' + j + '\" onclick=\"select(this);\">' + array[count] + '</td>');
+						} else {
+						  tr.append('<td>' + array[count] + '</td>');
+						}
 						count++;
 					}
 				}
@@ -282,10 +299,14 @@
 				tbody = $('#bodyP');
 				for (var i = 0; i < array.length / 8; i++) {
 					// create an <tr> element, append it to the <tbody> and cache it as a variable:
-					var tr = $('<tr/>').appendTo(tbody);
+					var tr = $('<tr id=\"tdP_r' + i + '\"/>').appendTo(tbody);
 					for (var j = 0; j < totalCells; j++) {
 						// append <td> elements to previously created <tr> element:
-						tr.append('<td>' + array[count] + '</td>');
+						if (j==0) {
+						  tr.append('<td id=\"tdP_r' + i + '_c' + j + '\" onclick=\"select(this);\">' + array[count] + '</td>');
+						} else {
+						  tr.append('<td>' + array[count] + '</td>');
+						}						
 						count++;
 					}
 				}
@@ -294,10 +315,14 @@
 				tbody = $('#bodyA');
 				for (var i = 0; i < array.length / 8; i++) {
 					// create an <tr> element, append it to the <tbody> and cache it as a variable:
-					var tr = $('<tr/>').appendTo(tbody);
+					var tr = $('<tr id=\"tdA_r' + i + '\"/>').appendTo(tbody);
 					for (var j = 0; j < totalCells; j++) {
 						// append <td> elements to previously created <tr> element:
-						tr.append('<td>' + array[count] + '</td>');
+						if (j==0) {
+						  tr.append('<td id=\"tdA_r' + i + '_c' + j + '\" onclick=\"select(this);\">' + array[count] + '</td>');
+						} else {
+						  tr.append('<td>' + array[count] + '</td>');
+						}
 						count++;
 					}
 				}
@@ -306,11 +331,15 @@
 				tbody = $('#bodyT');
 				for (var i = 0; i < array.length / 8; i++) {
 					// create an <tr> element, append it to the <tbody> and cache it as a variable:
-					var tr = $('<tr/>').appendTo(tbody);
+					var tr = $('<tr id=\"tdT_r' + i + '\"/>').appendTo(tbody);
 					for (var j = 0; j < totalCells; j++) {
 						// append <td> elements to previously created <tr> element:
-						tr.append('<td>' + array[count] + '</td>');
-						count++;
+						if (j==0) {
+						  tr.append('<td id=\"tdT_r' + i + '_c' + j + '\" onclick=\"select(this);\">' + array[count] + '</td>');
+						} else {
+						  tr.append('<td>' + array[count] + '</td>');
+						}
+						count++;	
 					}
 				}
 				// reset the count:
@@ -322,16 +351,18 @@
 				var elemento_body = "<table width='300'><tr><td>Dal</td><td><input type='text' id='dataDal'/></td></tr><tr><td>Al</td><td ><input type='text' id='dataAl'/></td></tr><tr><td>Tipo</td><td id='tipo'><input type='text' /></td></tr><tr><td>Descr.</td><td id='descr'><input type='text' /></td></tr><tr><td></td><td><input type='button' value='Accetta' onclick='setDati();'/>&nbsp;&nbsp;&nbsp;<input type='button' value='Annulla' onclick='setDati();'/></td></tr></table>";
 				return elemento_body;
 			}	
-			function setDati() {
-				switch (icont) {
-				 case 1: { 
-				      document.getElementById("divDatiMalattie").style.display = "block"; 
-					  document.getElementById("azioni_malattie").style.display = "block"; 
-					  //document.getElementById("divEditaMalattia").innerHTML = editaElemento("") ; 
-					  document.getElementById("divEditaMalattia").style.display = "none"; 
-				 	  break;
-				 }
+			function setDati(action) {
+			    if (icont == 0) return;		
+				if (action && action == 1) {
+				   // aggiungi i dati nella lista ....
+				} else if (action && action == 2) {
+				   // elimina i dati dalla lista ....
+				} else if (action && action == 3) {
+				   // selva i dati modificati nella lista ....
 				}
+				document.getElementById(panels[icont]).style.display = "block"; 
+				document.getElementById(actions[icont]).style.display = "block"; 
+				document.getElementById(edits[icont]).style.display = "none";	 
 			}
 		</script>
 	</head>
@@ -384,27 +415,24 @@
 					<p><strong>Patologie in atto</strong><br />
                             <div id="divDatiPatologie">
                             </div>
-							<div id="azioni_patologie">
-							  <table style="border-spacing: 20px;"><tr><td><img id="add" src="img/document_add.png" onclick="clickRef(1, 2);"/></td><td><img id="del" src="img/document_delete.png" onclick="clickRef(2, 2);"/></td><td><img id="edt" src="img/document_edit.png" onclick="clickRef(3, 2);"/></td></tr></table>
-							</div>
+							<div id="azioni_patologie"><table style="border-spacing: 20px;"><tr><td><img id="add" src="img/document_add.png" onclick="clickRef(1, 2);"/></td><td><img id="del" src="img/document_delete.png" onclick="clickRef(2, 2);"/></td><td><img id="edt" src="img/document_edit.png" onclick="clickRef(3, 2);"/></td></tr></table></div>
+							<div id="divEditaPatologia" style="display: none;"></div>
 					<a href="#menu">Ritorna al menu.</a></p>
 				</div>
 				<div id="fourth" class="menuItemInfo">
 					<p><strong>Allergie</strong><br />
                             <div id="divDatiAllergie">
                             </div>
-							<div id="azioni_allergie">
-							  <table style="border-spacing: 20px;"><tr><td><img id="add" src="img/document_add.png" onclick="clickRef(1, 3);"/></td><td><img id="del" src="img/document_delete.png" onclick="clickRef(2, 3);"/></td><td><img id="edt" src="img/document_edit.png" onclick="clickRef(3, 3);"/></td></tr></table>
-							</div>
+							<div id="azioni_allergie"><table style="border-spacing: 20px;"><tr><td><img id="add" src="img/document_add.png" onclick="clickRef(1, 3);"/></td><td><img id="del" src="img/document_delete.png" onclick="clickRef(2, 3);"/></td><td><img id="edt" src="img/document_edit.png" onclick="clickRef(3, 3);"/></td></tr></table></div>
+							<div id="divEditaAllergia" style="display: none;"></div>
 					<a href="#menu">Ritorna al menu.</a></p>
 				</div>
 				<div id="fifth" class="menuItemInfo">
 					<p><strong>Trattamenti non accettati</strong><br />
                             <div id="divDatiTrattamenti">
                             </div>
-							<div id="azioni_trattamenti">
-							  <table style="border-spacing: 20px;"><tr><td><img id="add" src="img/document_add.png" onclick="clickRef(1, 4);"/></td><td><img id="del" src="img/document_delete.png" onclick="clickRef(2, 4);"/></td><td><img id="edt" src="img/document_edit.png" onclick="clickRef(3, 4);"/></td></tr></table>
-							</div>
+							<div id="azioni_trattamenti"><table style="border-spacing: 20px;"><tr><td><img id="add" src="img/document_add.png" onclick="clickRef(1, 4);"/></td><td><img id="del" src="img/document_delete.png" onclick="clickRef(2, 4);"/></td><td><img id="edt" src="img/document_edit.png" onclick="clickRef(3, 4);"/></td></tr></table></div>
+							<div id="divEditaTrattamento" style="display: none;"></div>
 					<a href="#menu">Ritorna al menu.</a></p>
 				</div>
   			</div>
