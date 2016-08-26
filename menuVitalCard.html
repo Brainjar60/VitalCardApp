@@ -257,7 +257,21 @@
 							document.getElementById(actions[cntx]).style.display = "none"; 
 							document.getElementById(edits[cntx]).innerHTML = editaElemento(contesto) ; 
 							if (cntx == 1 || contesto == "Malattie") {
-							   document.getElementById('divTipoElemento').innerHTML = divTipoElementoContent; 
+							   document.getElementById('divTipoElemento').innerHTML = '<select><option value="/Sintomi/Uretrite">Uretrite</option>' + 
+        					      '<option value="/Sintomi/Ustioni">Ustioni</option>' + 
+                                  '<option value="/Sintomi/Uveite">Uveite</option>' + 
+                                  '<option value="/Sintomi/Vaginite">Vaginite</option>' + 
+                                  '<option value="/Sintomi/Vaginosi">Vaginosi</option>' + 
+                                  '<option value="/Sintomi/Vaiolo">Vaiolo</option>' + 
+                                  '<option value="/Sintomi/Varicella">Varicella</option>' + 
+                                  '<option value="/Sintomi/Varici_esofagee">Varici esofagee</option>' + 
+                                  '<option value="/Sintomi/Varicocele">Varicocele</option>' + 
+                                  '<option value="/Sintomi/Vene-varicose">Vene varicose</option>' + 
+                                  '<option value="/Sintomi/Verruche">Verruche</option>' + 
+                                  '<option value="/Sintomi/Vescica_neurologica">Vescica neurologica</option>' + 
+                                  '<option value="/Sintomi/Virus_Zika">Virus Zika</option>' + 
+                                  '<option value="/Sintomi/Vitiligine">Vitiligine</option>' + 
+                          		'</select>'; 
 							} 
 							$("#dataDal").datepicker({changeMonth: true, changeYear: true, maxDate: '+1Y', minDate: '-100Y', yearRange: '-100:+1'});
 							$("#dataAl").datepicker({changeMonth: true, changeYear: true, maxDate: '+1Y', minDate: '-100Y', yearRange: '-100:+1'});
