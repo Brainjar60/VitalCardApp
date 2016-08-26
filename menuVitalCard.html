@@ -256,23 +256,6 @@
 							document.getElementById(panels[cntx]).style.display = "none"; 
 							document.getElementById(actions[cntx]).style.display = "none"; 
 							document.getElementById(edits[cntx]).innerHTML = editaElemento(contesto) ; 
-							if (cntx == 1 || contesto == "Malattie") {
-							   document.getElementById('divTipoElemento').innerHTML = '<select><option value="/Sintomi/Uretrite">Uretrite</option>' + 
-        					      '<option value="/Sintomi/Ustioni">Ustioni</option>' + 
-                                  '<option value="/Sintomi/Uveite">Uveite</option>' + 
-                                  '<option value="/Sintomi/Vaginite">Vaginite</option>' + 
-                                  '<option value="/Sintomi/Vaginosi">Vaginosi</option>' + 
-                                  '<option value="/Sintomi/Vaiolo">Vaiolo</option>' + 
-                                  '<option value="/Sintomi/Varicella">Varicella</option>' + 
-                                  '<option value="/Sintomi/Varici_esofagee">Varici esofagee</option>' + 
-                                  '<option value="/Sintomi/Varicocele">Varicocele</option>' + 
-                                  '<option value="/Sintomi/Vene-varicose">Vene varicose</option>' + 
-                                  '<option value="/Sintomi/Verruche">Verruche</option>' + 
-                                  '<option value="/Sintomi/Vescica_neurologica">Vescica neurologica</option>' + 
-                                  '<option value="/Sintomi/Virus_Zika">Virus Zika</option>' + 
-                                  '<option value="/Sintomi/Vitiligine">Vitiligine</option>' + 
-                          		'</select>'; 
-							} 
 							$("#dataDal").datepicker({changeMonth: true, changeYear: true, maxDate: '+1Y', minDate: '-100Y', yearRange: '-100:+1'});
 							$("#dataAl").datepicker({changeMonth: true, changeYear: true, maxDate: '+1Y', minDate: '-100Y', yearRange: '-100:+1'});
 						    document.getElementById(edits[cntx]).style.display = "block"; 
@@ -409,7 +392,10 @@
 			}	
 			function editaElemento(elemento) 
 			{
-				var elemento_body = "<table width='300'><tr><td>Dal</td><td><input type='text' class='myDateText' maxlength='10' size='10' id='dataDal'/></td></tr><tr><td>Al</td><td ><input type='text' class='myDateText' maxlength='10' size='10' id='dataAl'/></td></tr><tr><td>Tipo</td><td id='tipo'><div id='divTipoElemento'></div></td></tr><tr><td>Descr.</td><td id='descr'><input type='text' /></td></tr><tr><td></td><td><input type='button' value='Accetta' onclick='setDati();'/>&nbsp;&nbsp;&nbsp;<input type='button' value='Annulla' onclick='setDati();'/></td></tr></table>"; 
+				var elemento_body = "<table width='300'><tr><td>Dal</td><td><input type='text' class='myDateText' maxlength='10' size='10' id='dataDal'/></td></tr><tr><td>Al</td><td >" +
+					                "<input type='text' class='myDateText' maxlength='10' size='10' id='dataAl'/></td></tr><tr><td>Tipo</td><td id='tipo'>" + 
+									"<div id='divTipoElemento'><select><option value='Malattia 1'>Malattia 1</option><option value='Malattia 1'>Malattia 1</option></select></div>" + 
+									"</td></tr><tr><td>Descr.</td><td id='descr'><input type='text' /></td></tr><tr><td></td><td><input type='button' value='Accetta' onclick='setDati();'/>&nbsp;&nbsp;&nbsp;<input type='button' value='Annulla' onclick='setDati();'/></td></tr></table>"; 
 				return elemento_body;
 			}	
 			function setDati(action) {
