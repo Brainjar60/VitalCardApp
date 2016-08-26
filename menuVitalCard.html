@@ -256,7 +256,7 @@
 							document.getElementById(panels[cntx]).style.display = "none"; 
 							document.getElementById(actions[cntx]).style.display = "none"; 
 							document.getElementById(edits[cntx]).innerHTML = editaElemento(contesto) ; 
-							if (cntx == 1) {
+							if (cntx == 1 || contesto == "Malattie") {
 							   document.getElementById('divTipoElemento').innerHTML = divTipoElementoContent; 
 							} 
 							$("#dataDal").datepicker({changeMonth: true, changeYear: true, maxDate: '+1Y', minDate: '-100Y', yearRange: '-100:+1'});
@@ -501,6 +501,7 @@
 		<div id="malattieListDiv" style="display: none;">
 		<select id="malattieList">
 		<option value=""></option>
+		<!--
 		<option value="/Sintomi/Acalasia">Acalasia</option>
         <option value="/Sintomi/Acetonemia">Acetonemia</option>
         <option value="/Sintomi/Acidosi_metabolica">Acidosi metabolica</option>
@@ -1134,6 +1135,7 @@
         <option value="/Sintomi/Ulcera_gastrica">Ulcera gastrica</option>
         <option value="/Sintomi/Ulcera-peptica">Ulcera peptica</option>
         <option value="/Sintomi/Unghia_incarnita">Unghia incarnita</option>
+		-->
         <option value="/Sintomi/Uretrite">Uretrite</option>
         <option value="/Sintomi/Ustioni">Ustioni</option>
         <option value="/Sintomi/Uveite">Uveite</option>
