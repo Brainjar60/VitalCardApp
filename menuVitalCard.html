@@ -11,9 +11,6 @@
 		<link type="text/css" rel="stylesheet" href="css/font-awesome.min.css" />
 		<link rel="stylesheet" href="css/jquery-ui.css" />
 		<style type="text/css">
-			.myDateText {
-				width: 50px;
-			}
 			.content {
 				padding-top: 0;
 				background-position: 35px 55px;
@@ -392,9 +389,9 @@
 			}	
 			function editaElemento(elemento) 
 			{
-				var elemento_body = "<table width='300'><tr><td>Dal</td><td><input type='text' class='myDateText' maxlength='10' size='10' id='dataDal'/></td></tr><tr><td>Al</td><td >" +
-					                "<input type='text' class='myDateText' maxlength='10' size='10' id='dataAl'/></td></tr><tr><td>Tipo</td><td id='tipo'>" + 
-									"<div id='divTipoElemento'><select><option value='Malattia 1'>Malattia 1</option><option value='Malattia 1'>Malattia 1</option></select></div>" + 
+				var elemento_body = "<table width='300'><tr><td>Dal</td><td><input type='text' id='dataDal'/></td></tr><tr><td>Al</td><td >" +
+					                "<input type='text' id='dataAl'/></td></tr><tr><td>Tipo</td><td id='tipo'>" + 
+									"<div id='divTipoElemento'><select><option>Malattia 1</option><option>Malattia 2</option></select></div>" + 
 									"</td></tr><tr><td>Descr.</td><td id='descr'><input type='text' /></td></tr><tr><td></td><td><input type='button' value='Accetta' onclick='setDati();'/>&nbsp;&nbsp;&nbsp;<input type='button' value='Annulla' onclick='setDati();'/></td></tr></table>"; 
 				return elemento_body;
 			}	
