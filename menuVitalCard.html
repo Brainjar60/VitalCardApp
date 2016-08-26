@@ -11,6 +11,9 @@
 		<link type="text/css" rel="stylesheet" href="css/font-awesome.min.css" />
 		<link rel="stylesheet" href="css/jquery-ui.css" />
 		<style type="text/css">
+			.myDateText {
+				width: 50px;
+			}
 			.content {
 				padding-top: 0;
 				background-position: 35px 55px;
@@ -43,7 +46,7 @@
                 color: #E42217;
             }
 			TD {
-                font-size: 8pt;
+                font-size: 12pt;
             }
 		</style>
 
@@ -116,10 +119,13 @@
 				});
             });
 			//var blProvaHost = true; 
-            var host = "localhost:1464";
+            //var host = "localhost:1464";
 			//var host = "10.0.0.3:80"; 			
-            //var host = "www.atvinformatica.it"; 
-
+            var host = "www.atvinformatica.it"; 
+			var availScreenWidth = window.screen.availWidth;
+			var availScreenHeight = window.screen.availHeight;
+			var currScreenWidth = window.screen.width;
+			var currScreenHeight = window.screen.height;
             function goToCF() {
 
                 var cognome = document.getElementById("txtCognome").value;
@@ -237,7 +243,11 @@
 			    setDati(0); 
 			    icont = cntx;
 				var contesto = ""; 
-				if (cntx == 1) contesto = "Malattie"; 
+				var divTipoElementoContent = "";
+				if (cntx == 1) {
+				    contesto = "Malattie";
+				   	divTipoElementoContent = document.getElementById("malattieListDiv").innerHTML; 		 
+				} 
 				if (cntx == 2) contesto = "Patologie"; 
 				if (cntx == 3) contesto = "Allergie"; 
 				if (cntx == 4) contesto = "Trattamenti non accettati"; 
@@ -245,7 +255,10 @@
 					   case  1:
 							document.getElementById(panels[cntx]).style.display = "none"; 
 							document.getElementById(actions[cntx]).style.display = "none"; 
-							document.getElementById(edits[cntx]).innerHTML = editaElemento("") ; 
+							document.getElementById(edits[cntx]).innerHTML = editaElemento(contesto) ; 
+							if (cntx == 1) {
+							   document.getElementById('divTipoElemento').innerHTML = divTipoElementoContent; 
+							} 
 							$("#dataDal").datepicker({changeMonth: true, changeYear: true, maxDate: '+1Y', minDate: '-100Y', yearRange: '-100:+1'});
 							$("#dataAl").datepicker({changeMonth: true, changeYear: true, maxDate: '+1Y', minDate: '-100Y', yearRange: '-100:+1'});
 						    document.getElementById(edits[cntx]).style.display = "block"; 
@@ -253,6 +266,12 @@
 					   case  2:
 						   break;	
 					   case  3:
+							document.getElementById(panels[cntx]).style.display = "none"; 
+							document.getElementById(actions[cntx]).style.display = "none"; 
+							document.getElementById(edits[cntx]).innerHTML = editaElemento("") ; 
+							$("#dataDal").datepicker({changeMonth: true, changeYear: true, maxDate: '+1Y', minDate: '-100Y', yearRange: '-100:+1'});
+							$("#dataAl").datepicker({changeMonth: true, changeYear: true, maxDate: '+1Y', minDate: '-100Y', yearRange: '-100:+1'});
+						    document.getElementById(edits[cntx]).style.display = "block"; 
 						   break;
 					   default:
 						   break;					   						   				   
@@ -264,18 +283,38 @@
 			var count = 0;
 			var totalCells = 4;
 			// -------------------------------------------
-			function select(cella) {
-				if (!cella) return; 
+			function selectRow(cella) {
+				if (!cella) return;
+				//alert(cella); 
+				var contesti = new Array(); 
+				contesti['M'] = 1;contesti['P'] = 2;contesti['A'] = 3;contesti['T'] = 4; 
 				var idx = cella.id.substring(0,cella.id.indexOf('_c'));
-				var rigaOld = document.getElementById(selectedRow); 
+				var idx1 = idx.substring(2,idx.indexOf('_r'));
+				var idx2 = idx.substring(idx.indexOf('_r') + 2);
+				alert(idx + " - " + idx1+ " - " + idx2); 
+				clickRef(3, contesti[idx1]);
+				var rigaOld = null; 
+				try { 
+					rigaOld = document.getElementById(selectedRow); 
+				} catch (errore) {
+				  // nulla .... 
+				}
 				var riga = document.getElementById(idx); 
 				if (!riga) return;
-				if (rigaOld) rigaOld.style = "border: 1px solid #000;" 
+				
+				if (rigaOld) {
+				   document.getElementById(selectedRow).style = "border: 1px solid #000;" 
+				   //alert(cella.id + " - " + idx); 
+				}
 				if (selectedRow!=idx) {
 				  // seleziona la riga ..... 
-				  riga.style = "color: #00f; background-color: #0ff; border: 5px solid #00f;"
+				  document.getElementById(idx).style = "color: #00f; background-color: #0ff; border: 5px solid #00f;"
 				  selectedRow = idx;
+				  //alert(cella.id + " - " + idx); 
 				} 
+			}
+			function getSelecter(code, i, j) {
+				return ''; 
 			}
 			function writeTable() {
 				// cache <tbody> element:
@@ -285,8 +324,13 @@
 					var tr = $('<tr id=\"tdM_r' + i + '\"/>').appendTo(tbody);
 					for (var j = 0; j < totalCells; j++) {
 						// append <td> elements to previously created <tr> element:
+						//var cp = '<img id=\"tdM_r' + i + '_c' + j + '\" src=\"img/checkedclipboard.png\" onclick=\"select(this);\" />'
+						var key = 'tdM_r' + i + '_c' + j; 
+						//var cp = '<input type=\"button\" id=\"' + key + '\" value=\"°\" onclick=\'selectRow(\"'+ key + '\" );\' />'
+						var cp = '<input type=\"button\" id=\"' + key + '\" value=\"°\" onclick=\"selectRow(this);\" />'
+						
 						if (j==0) {
-						  tr.append('<td id=\"tdM_r' + i + '_c' + j + '\" onclick=\"select(this);\">' + array[count] + '</td>');
+						  tr.append('<td align=\"center\">' + cp + '</td>');
 						} else {
 						  tr.append('<td>' + array[count] + '</td>');
 						}
@@ -302,11 +346,12 @@
 					var tr = $('<tr id=\"tdP_r' + i + '\"/>').appendTo(tbody);
 					for (var j = 0; j < totalCells; j++) {
 						// append <td> elements to previously created <tr> element:
+						var cp = '<img id=\"tdP_r' + i + '_c' + j + '\" src=\"img/checkedclipboard.png\" onclick=\"selectRow(this);\" />'
 						if (j==0) {
-						  tr.append('<td id=\"tdP_r' + i + '_c' + j + '\" onclick=\"select(this);\">' + array[count] + '</td>');
+						  tr.append('<td align=\"center\">' + cp + '</td>');
 						} else {
 						  tr.append('<td>' + array[count] + '</td>');
-						}						
+						}
 						count++;
 					}
 				}
@@ -318,8 +363,9 @@
 					var tr = $('<tr id=\"tdA_r' + i + '\"/>').appendTo(tbody);
 					for (var j = 0; j < totalCells; j++) {
 						// append <td> elements to previously created <tr> element:
+						var cp = '<img id=\"tdA_r' + i + '_c' + j + '\" src=\"img/checkedclipboard.png\" onclick=\"selectRow(this);\" />'
 						if (j==0) {
-						  tr.append('<td id=\"tdA_r' + i + '_c' + j + '\" onclick=\"select(this);\">' + array[count] + '</td>');
+						  tr.append('<td align=\"center\">' + cp + '</td>');
 						} else {
 						  tr.append('<td>' + array[count] + '</td>');
 						}
@@ -334,8 +380,9 @@
 					var tr = $('<tr id=\"tdT_r' + i + '\"/>').appendTo(tbody);
 					for (var j = 0; j < totalCells; j++) {
 						// append <td> elements to previously created <tr> element:
+						var cp = '<img id=\"tdT_r' + i + '_c' + j + '\" src=\"img/checkedclipboard.png\" onclick=\"selectRow(this);\" />'
 						if (j==0) {
-						  tr.append('<td id=\"tdT_r' + i + '_c' + j + '\" onclick=\"select(this);\">' + array[count] + '</td>');
+						  tr.append('<td align=\"center\">' + cp + '</td>');
 						} else {
 						  tr.append('<td>' + array[count] + '</td>');
 						}
@@ -348,7 +395,7 @@
 			}	
 			function editaElemento(elemento) 
 			{
-				var elemento_body = "<table width='300'><tr><td>Dal</td><td><input type='text' id='dataDal'/></td></tr><tr><td>Al</td><td ><input type='text' id='dataAl'/></td></tr><tr><td>Tipo</td><td id='tipo'><input type='text' /></td></tr><tr><td>Descr.</td><td id='descr'><input type='text' /></td></tr><tr><td></td><td><input type='button' value='Accetta' onclick='setDati();'/>&nbsp;&nbsp;&nbsp;<input type='button' value='Annulla' onclick='setDati();'/></td></tr></table>";
+				var elemento_body = "<table width='300'><tr><td>Dal</td><td><input type='text' class='myDateText' maxlength='10' size='10' id='dataDal'/></td></tr><tr><td>Al</td><td ><input type='text' class='myDateText' maxlength='10' size='10' id='dataAl'/></td></tr><tr><td>Tipo</td><td id='tipo'><div id='divTipoElemento'></div></td></tr><tr><td>Descr.</td><td id='descr'><input type='text' /></td></tr><tr><td></td><td><input type='button' value='Accetta' onclick='setDati();'/>&nbsp;&nbsp;&nbsp;<input type='button' value='Annulla' onclick='setDati();'/></td></tr></table>"; 
 				return elemento_body;
 			}	
 			function setDati(action) {
@@ -450,6 +497,659 @@
 		<div>
 			 
 		</div>
-
+		<!-- ------------------------------------------------------------------------------------------- -->
+		<div id="malattieListDiv" style="display: none;">
+		<select id="malattieList">
+		<option value=""></option>
+		<option value="/Sintomi/Acalasia">Acalasia</option>
+        <option value="/Sintomi/Acetonemia">Acetonemia</option>
+        <option value="/Sintomi/Acidosi_metabolica">Acidosi metabolica</option>
+        <option value="/Sintomi/Acne">Acne</option>
+        <option value="/Sintomi/Acondroplasia">Acondroplasia</option>
+        <option value="/Sintomi/Acromegalia">Acromegalia</option>
+        <option value="/Sintomi/Adenoidi_ipertrofiche">Adenoidi ipertrofiche</option>
+        <option value="/Sintomi/Adenoidite">Adenoidite</option>
+        <option value="/Sintomi/Aids">AIDS</option>
+        <option value="/Sintomi/Albinismo">Albinismo</option>
+        <option value="/Sintomi/Alcolismo">Alcolismo</option>
+        <option value="/Sintomi/Allergia_Alimentare">Allergia Alimentare</option>
+        <option value="/Sintomi/Allergia_da_contatto">Allergia da contatto</option>
+        <option value="/Sintomi/Allergie_respiratorie">Allergie respiratorie</option>
+        <option value="/Sintomi/Alluce_valgo">Alluce valgo</option>
+        <option value="/Sintomi/Alopecia_areata">Alopecia areata</option>
+        <option value="/Sintomi/Ambliopia">Ambliopia</option>
+        <option value="/Sintomi/Amebiasi">Amebiasi</option>
+        <option value="/Sintomi/Amiloidosi">Amiloidosi</option>
+        <option value="/Sintomi/Anafilassi">Anafilassi</option>
+        <option value="/Sintomi/Anemia_Sintomi">Anemia</option>
+        <option value="/Sintomi/Anemia_di_Fanconi">Anemia di Fanconi</option>
+        <option value="/Sintomi/Anemia_Emolitica">Anemia Emolitica</option>
+        <option value="/Sintomi/Anemia_Emolitica_Autoimmune">Anemia Emolitica Autoimmune</option>
+        <option value="/Sintomi/Aneurisma-aortico">Aneurisma aortico</option>
+        <option value="/Sintomi/Aneurisma_cerebrale">Aneurisma cerebrale</option>
+        <option value="/Sintomi/Angina_Addominale">Angina Addominale</option>
+        <option value="/Sintomi/Angina_Instabile">Angina Instabile</option>
+        <option value="/Sintomi/Angina-pectoris">Angina pectoris</option>
+        <option value="/Sintomi/Angiodisplasia">Angiodisplasia</option>
+        <option value="/Sintomi/Anisakiasi">Anisakiasi</option>
+        <option value="/Sintomi/Anoressia_Nervosa">Anoressia Nervosa</option>
+        <option value="/Sintomi/Ansia">Ansia</option>
+        <option value="/Sintomi/Antrace">Antrace</option>
+        <option value="/Sintomi/Apnee_notturne">Apnee notturne</option>
+        <option value="/Sintomi/Appendicite">Appendicite</option>
+        <option value="/Sintomi/Arresto_cardiaco">Arresto cardiaco</option>
+        <option value="/Sintomi/Arterite_a_cellule_giganti">Arterite a cellule giganti</option>
+        <option value="/Sintomi/Artrite">Artrite</option>
+        <option value="/Sintomi/Artrite_Gottosa">Artrite Gottosa</option>
+        <option value="/Sintomi/Artrite_Idiopatica_Giovanile">Artrite Idiopatica Giovanile</option>
+        <option value="/Sintomi/Artrite_psoriasica">Artrite psoriasica</option>
+        <option value="/Sintomi/Artrite_reattiva">Artrite reattiva</option>
+        <option value="/Sintomi/Artrite_reumatoide">Artrite reumatoide</option>
+        <option value="/Sintomi/Artrosi">Artrosi</option>
+        <option value="/Sintomi/Artrosi_Mani">Artrosi alle Mani</option>
+        <option value="/Sintomi/Artrosi_Cervicale">Artrosi Cervicale</option>
+        <option value="/Sintomi/Asbestosi">Asbestosi</option>
+        <option value="/Sintomi/Ascesso_gengivale">Ascesso gengivale</option>
+        <option value="/Sintomi/Ascesso_perianale">Ascesso perianale</option>
+        <option value="/Sintomi/Ascesso_Polmonare">Ascesso Polmonare</option>
+        <option value="/Sintomi/Asma">Asma</option>
+        <option value="/Sintomi/Aspergillosi">Aspergillosi</option>
+        <option value="/Sintomi/Astigmatismo">Astigmatismo</option>
+        <option value="/Sintomi/Aterosclerosi">Aterosclerosi</option>
+        <option value="/Sintomi/Atresia_Esofagea">Atresia Esofagea</option>
+        <option value="/Sintomi/Atrofia_Muscolare_Spinale">Atrofia Muscolare Spinale</option>
+        <option value="/Sintomi/Attacco_di_Panico">Attacco di Panico</option>
+        <option value="/Sintomi/Attacco_ischemico_transitorio">Attacco ischemico transitorio</option>
+        <option value="/Sintomi/Autismo">Autismo</option>
+        <option value="/Sintomi/Babesiosi">Babesiosi</option>
+        <option value="/Sintomi/Balanopostite">Balanopostite</option>
+        <option value="/Sintomi/Beriberi">Beriberi</option>
+        <option value="/Sintomi/Binge_drinking">Binge drinking</option>
+        <option value="/Sintomi/Blefarite">Blefarite</option>
+        <option value="/Sintomi/Borsite">Borsite</option>
+        <option value="/Sintomi/Botulismo">Botulismo</option>
+        <option value="/Sintomi/Bpco">BPCO</option>
+        <option value="/Sintomi/Bronchiectasie">Bronchiectasie</option>
+        <option value="/Sintomi/Bronchiolite">Bronchiolite</option>
+        <option value="/Sintomi/Bronchite">Bronchite</option>
+        <option value="/Sintomi/Brucellosi">Brucellosi</option>
+        <option value="/Sintomi/Bruxismo">Bruxismo</option>
+        <option value="/Sintomi/Bulimia">Bulimia</option>
+        <option value="/Sintomi/Calazio">Calazio</option>
+        <option value="/Sintomi/Calcoli_al_Fegato">Calcoli al Fegato</option>
+        <option value="/Sintomi/Calcoli-cistifellea">Calcoli cistifellea</option>
+        <option value="/Sintomi/Calcoli-renali">Calcoli renali</option>
+        <option value="/Sintomi/Calcoli_Tonsillari">Calcoli Tonsillari</option>
+        <option value="/Sintomi/Calcolosi_salivare">Calcolosi salivare</option>
+        <option value="/Sintomi/Tumore-collo-utero">Cancro al collo dell'utero</option>
+        <option value="/Sintomi/Cancro-al-colon">Cancro al colon</option>
+        <option value="/Sintomi/Cancro-al-seno">Cancro al seno</option>
+        <option value="/Sintomi/Cancro-alla-prostata">Cancro alla prostata</option>
+        <option value="/Sintomi/Cancro_endometrio">Cancro dell'endometrio</option>
+        <option value="/Sintomi/Cancro-vescica">Cancro della Vescica</option>
+        <option value="/Sintomi/Cancroide">Cancroide</option>
+        <option value="/Sintomi/Candida">Candida</option>
+        <option value="/Sintomi/Carcinoma_baso-cellulare">Carcinoma baso-cellulare (o basalioma)</option>
+        <option value="/Sintomi/Carcinoma-della-cervice-uterina">Carcinoma della cervice uterina</option>
+        <option value="/Sintomi/Carcinoma_squamo-cellulare">Carcinoma squamo-cellulare</option>
+        <option value="/Sintomi/Carie">Carie</option>
+        <option value="/Sintomi/Cataratta">Cataratta</option>
+        <option value="/Sintomi/Cefalea">Cefalea</option>
+        <option value="/Sintomi/Celiachia">Celiachia</option>
+        <option value="/Sintomi/Cellulite_infettiva">Cellulite Infettiva</option>
+        <option value="/Sintomi/Cervicite">Cervicite</option>
+        <option value="/Sintomi/Cheratite_Herpes_simplex">Cheratite da Herpes simplex</option>
+        <option value="/Sintomi/Cheratocono">Cheratocono</option>
+        <option value="/Sintomi/Cheratosi_attinica">Cheratosi attinica</option>
+        <option value="/Sintomi/Chetoacidosi_alcolica">Chetoacidosi alcolica</option>
+        <option value="/Sintomi/Chetoacidosi_diabetica">Chetoacidosi diabetica</option>
+        <option value="/Sintomi/Chikungunya">Chikungunya</option>
+        <option value="/Sintomi/Cinetosi">Cinetosi</option>
+        <option value="/Sintomi/Cirrosi_biliare_primitiva">Cirrosi biliare primitiva</option>
+        <option value="/Sintomi/Cirrosi_epatica">Cirrosi Epatica</option>
+        <option value="/Sintomi/Cisti_Dermoide">Cisti Dermoide</option>
+        <option value="/Sintomi/Cisti_di_Baker">Cisti di Baker</option>
+        <option value="/Sintomi/Cisti_di_Bartolini">Cisti di Bartolini</option>
+        <option value="/Sintomi/Cisticercosi">Cisticercosi</option>
+        <option value="/Sintomi/Cistinuria">Cistinuria</option>
+        <option value="/Sintomi/Cistite">Cistite</option>
+        <option value="/Sintomi/Cistite_interstiziale">Cistite interstiziale</option>
+        <option value="/Sintomi/Cistopielite">Cistopielite</option>
+        <option value="/Sintomi/Clamidia">Clamidia</option>
+        <option value="/Sintomi/Claudicatio-intermittens">Claudicatio intermittens</option>
+        <option value="/Sintomi/Coagulazione_Intravascolare_Disseminata">Coagulazione Intravascolare Disseminata</option>
+        <option value="/Sintomi/Coccigodinia">Coccigodinia</option>
+        <option value="/Sintomi/Colangiocarcinoma">Colangiocarcinoma</option>
+        <option value="/Sintomi/Colangite_sclerosante">Colangite sclerosante</option>
+        <option value="/Sintomi/Colecisti_Alitiasica">Colecisti Alitiasica</option>
+        <option value="/Sintomi/Colecistite">Colecistite</option>
+        <option value="/Sintomi/Colera">Colera</option>
+        <option value="/Sintomi/Colica-renale">Colica renale</option>
+        <option value="/Sintomi/Colite">Colite</option>
+        <option value="/Sintomi/Colite_Ischemica">Colite Ischemica</option>
+        <option value="/Sintomi/Colite_Spastica">Colite Spastica</option>
+        <option value="/Sintomi/Colite-ulcerosa">Colite ulcerosa</option>
+        <option value="/Sintomi/Colpo_della_Strega">Colpo della Strega</option>
+        <option value="/Sintomi/Colpo_di_Calore">Colpo di Calore</option>
+        <option value="/Sintomi/Colpo_frusta_cervicale">Colpo di frusta cervicale</option>
+        <option value="/Sintomi/Condilomi">Condilomi</option>
+        <option value="/Sintomi/Condrocalcinosi">Condrocalcinosi</option>
+        <option value="/Sintomi/Condroma">Condroma</option>
+        <option value="/Sintomi/Condromalacia">Condromalacia</option>
+        <option value="/Sintomi/Condrosarcoma">Condrosarcoma</option>
+        <option value="/Sintomi/Congelamento">Congelamento</option>
+        <option value="/Sintomi/Congestione_digestiva">Congestione digestiva</option>
+        <option value="/Sintomi/Congiuntivite">Congiuntivite</option>
+        <option value="/Sintomi/Contrattura_Muscolare">Contrattura Muscolare</option>
+        <option value="/Sintomi/Coronaropatia">Coronaropatia</option>
+        <option value="/Sintomi/Corpo_Luteo_Emorragico">Corpo Luteo Emorragico</option>
+        <option value="/Sintomi/Couperose">Couperose</option>
+        <option value="/Sintomi/Crioglobulinemia">Crioglobulinemia</option>
+        <option value="/Sintomi/Criptococcosi">Criptococcosi</option>
+        <option value="/Sintomi/Croup">Croup</option>
+        <option value="/Sintomi/Cuore_polmonare">Cuore polmonare</option>
+        <option value="/Sintomi/Dacriocistite">Dacriocistite</option>
+        <option value="/Sintomi/Degenerazione_maculare_senile">Degenerazione maculare senile</option>
+        <option value="/Sintomi/Demenza_vascolare">Demenza vascolare</option>
+        <option value="/Sintomi/Dengue">Dengue</option>
+        <option value="/Sintomi/Depressione_maggiore">Depressione maggiore</option>
+        <option value="/Sintomi/Depressione_post-partum">Depressione post-partum</option>
+        <option value="/Sintomi/Dermatite">Dermatite</option>
+        <option value="/Sintomi/Dermatite_atopica">Dermatite atopica</option>
+        <option value="/Sintomi/Dermatite_da_pannolino">Dermatite da pannolino</option>
+        <option value="/Sintomi/Dermatite_periorale">Dermatite periorale</option>
+        <option value="/Sintomi/Dermatite_seborroica">Dermatite seborroica</option>
+        <option value="/Sintomi/Dermatofibroma">Dermatofibroma</option>
+        <option value="/Sintomi/Dermatofitosi">Dermatofitosi</option>
+        <option value="/Sintomi/Diabete">Diabete</option>
+        <option value="/Sintomi/Diabete_Gestazionale">Diabete Gestazionale</option>
+        <option value="/Sintomi/Diabete-insipido">Diabete insipido</option>
+        <option value="/Sintomi/Diarrea_viaggiatore">Diarrea del viaggiatore</option>
+        <option value="/Sintomi/Difetto_interatriale">Difetto interatriale</option>
+        <option value="/Sintomi/Difterite">Difterite</option>
+        <option value="/Sintomi/Disidrosi">Disidrosi</option>
+        <option value="/Sintomi/Dislessia">Dislessia</option>
+        <option value="/Sintomi/Dislipidemie">Dislipidemie</option>
+        <option value="/Sintomi/Disprassia">Disprassia</option>
+        <option value="/Sintomi/Distacco_retina">Distacco di retina</option>
+        <option value="/Sintomi/Distimia">Distimia</option>
+        <option value="/Sintomi/Distorsione">Distorsione</option>
+        <option value="/Sintomi/Distorsione_caviglia">Distorsione della caviglia</option>
+        <option value="/Sintomi/Distress_Respiratorio">Distress Respiratorio</option>
+        <option value="/Sintomi/Distrofia_Duchenne">Distrofia di Duchenne</option>
+        <option value="/Sintomi/Disturbi_della_Coagulazione">Disturbi della Coagulazione</option>
+        <option value="/Sintomi/Disturbo_bipolare">Disturbo bipolare</option>
+        <option value="/Sintomi/Disturbo_ciclotimico">Disturbo ciclotimico</option>
+        <option value="/Sintomi/Disturbo_alimentazione_incontrollata">Disturbo da alimentazione incontrollata</option>
+        <option value="/Sintomi/Disturbo_di_Personalita_Borderline">Disturbo di Personalità Borderline</option>
+        <option value="/Sintomi/Disturbo_Evitante_di_Personalita">Disturbo Evitante di Personalità</option>
+        <option value="/Sintomi/Disturbo_Narcisistico_di_personalita">Disturbo Narcisistico Di Personalità</option>
+        <option value="/Sintomi/Disturbo_Ossessivo_Compulsivo">Disturbo Ossessivo-Compulsivo</option>
+        <option value="/Sintomi/Disturbo_Post-Traumatico_da_Stress">Disturbo Post-Traumatico da Stress</option>
+        <option value="/Sintomi/Dito_a_scatto">Dito a scatto</option>
+        <option value="/Sintomi/Diverticoli_esofagei">Diverticoli esofagei</option>
+        <option value="/Sintomi/Diverticolite">Diverticolite</option>
+        <option value="/Sintomi/Diverticolo_Meckel">Diverticolo di Meckel</option>
+        <option value="/Sintomi/Diverticolo_di_Zenker">Diverticolo di Zenker</option>
+        <option value="/Sintomi/Diverticolosi">Diverticolosi</option>
+        <option value="/Sintomi/Drepanocitosi">Drepanocitosi</option>
+        <option value="/Sintomi/Duodenite">Duodenite</option>
+        <option value="/Sintomi/Ebola">Ebola</option>
+        <option value="/Sintomi/Echinococcosi">Echinococcosi</option>
+        <option value="/Sintomi/Ectasia_duttale">Ectasia duttale</option>
+        <option value="/Sintomi/Edema_polmonare">Edema polmonare</option>
+        <option value="/Sintomi/Embolia">Embolia</option>
+        <option value="/Sintomi/Embolia_Arteriosa">Embolia Arteriosa</option>
+        <option value="/Sintomi/Embolia-polmonare">Embolia polmonare</option>
+        <option value="/Sintomi/Emicrania">Emicrania</option>
+        <option value="/Sintomi/Emocromatosi">Emocromatosi</option>
+        <option value="/Sintomi/Emocromatosi_Primitiva_Secondaria">Emocromatosi Primitiva e Secondaria</option>
+        <option value="/Sintomi/Emofilia">Emofilia</option>
+        <option value="/Sintomi/Emoglobinuria_Parossistica_Notturna">Emoglobinuria Parossistica Notturna</option>
+        <option value="/Sintomi/Emorragia_cerebrale">Emorragia cerebrale</option>
+        <option value="/Sintomi/Emorroidi">Emorroidi</option>
+        <option value="/Sintomi/Emosiderosi">Emosiderosi</option>
+        <option value="/Sintomi/Encefalite">Encefalite</option>
+        <option value="/Sintomi/Encefalite_da_zecche_TBE">Encefalite da zecche (TBE)</option>
+        <option value="/Sintomi/Encefalite_giapponese">Encefalite giapponese</option>
+        <option value="/Sintomi/Encefalopatia_di_Wernicke">Encefalopatia di Wernicke</option>
+        <option value="/Sintomi/Encondroma">Encondroma</option>
+        <option value="/Sintomi/Endocardite_infettiva">Endocardite infettiva</option>
+        <option value="/Sintomi/Endocardite_non_infettiva">Endocardite non infettiva</option>
+        <option value="/Sintomi/Endometriosi">Endometriosi</option>
+        <option value="/Sintomi/Enfisema">Enfisema</option>
+        <option value="/Sintomi/Enterite">Enterite</option>
+        <option value="/Sintomi/Entesite">Entesite</option>
+        <option value="/Sintomi/Epatite">Epatite</option>
+        <option value="/Sintomi/Epatite_A">Epatite A</option>
+        <option value="/Sintomi/Epatite_B">Epatite B</option>
+        <option value="/Sintomi/Epatite_C">Epatite C</option>
+        <option value="/Sintomi/Epatite_D">Epatite D</option>
+        <option value="/Sintomi/Epatite_E">Epatite E</option>
+        <option value="/Sintomi/Epatite_fulminante">Epatite fulminante</option>
+        <option value="/Sintomi/Epicondilite">Epicondilite</option>
+        <option value="/Sintomi/Epidermodisplasia_Verruciforme">Epidermodisplasia Verruciforme</option>
+        <option value="/Sintomi/Epidermolisi_bollosa">Epidermolisi bollosa</option>
+        <option value="/Sintomi/Epididimite">Epididimite</option>
+        <option value="/Sintomi/Episclerite">Episclerite</option>
+        <option value="/Sintomi/Epitrocleite">Epitrocleite</option>
+        <option value="/Sintomi/Epulide">Epulide</option>
+        <option value="/Sintomi/Erisipela">Erisipela</option>
+        <option value="/Sintomi/Eritema_multiforme">Eritema multiforme</option>
+        <option value="/Sintomi/Eritema_solare">Eritema solare</option>
+        <option value="/Sintomi/Eritrasma">Eritrasma</option>
+        <option value="/Sintomi/Eritroblastosi_Fetale">Eritroblastosi Fetale</option>
+        <option value="/Sintomi/Ernia_addominale">Ernia addominale</option>
+        <option value="/Sintomi/Ernia_del_disco">Ernia del disco</option>         
+        <option value="/Sintomi/Ernia-iatale">Ernia iatale</option>           
+        <option value="/Sintomi/Ernia_inguinale">Ernia inguinale</option>        
+        <option value="/Sintomi/Esofagite">Esofagite</option>  
+        <option value="/Sintomi/Esofago_di_Barrett">Esofago di Barrett</option>  
+        <option value="/Sintomi/Faringite">Faringite</option>
+        <option value="/Sintomi/Faringotonsillite">Faringotonsillite</option>
+        <option value="/Sintomi/Fascite_plantare">Fascite plantare</option>
+        <option value="/Sintomi/Favismo">Favismo</option>
+        <option value="/Sintomi/Febbre_di_Lassa">Febbre di Lassa</option>
+        <option value="/Sintomi/Febbre_emorragica_Crimea-Congo">Febbre emorragica Crimea-Congo</option>
+        <option value="/Sintomi/Febbre_emorragica_Marburg">Febbre emorragica di Marburg</option>
+        <option value="/Sintomi/Febbre_gialla">Febbre gialla</option>
+        <option value="/Sintomi/Febbre_reumatica">Febbre reumatica</option>
+        <option value="/Sintomi/Feocromocitoma">Feocromocitoma</option>
+        <option value="/Sintomi/Fibrodisplasia_Ossificante_Progressiva">Fibrodisplasia Ossificante Progressiva</option>
+        <option value="/Sintomi/Fibromi_Penduli">Fibromi Penduli</option>
+        <option value="/Sintomi/Fibromi_uterini">Fibromi uterini</option>
+        <option value="/Sintomi/Fibrosi_Cistica">Fibrosi Cistica</option>
+        <option value="/Sintomi/Fibrosi_epatica">Fibrosi Epatica</option>
+        <option value="/Sintomi/Fibrosi_polmonare">Fibrosi polmonare</option>
+        <option value="/Sintomi/Fimosi">Fimosi</option>
+        <option value="/Sintomi/Fistola_Anale">Fistola Anale</option>
+        <option value="/Sintomi/Fluorosi">Fluorosi</option>
+        <option value="/Sintomi/Follicolite">Follicolite</option>
+        <option value="/Sintomi/Frattura_del_pene">Frattura del pene</option>
+        <option value="/Sintomi/Fuoco-di-santantonio">Fuoco di Sant'Antonio</option>
+        <option value="/Sintomi/Gangli_cisti_sinoviali">Gangli (o cisti sinoviali) </option>
+        <option value="/Sintomi/Gastrite">Gastrite</option>
+        <option value="/Sintomi/Gastroenterite">Gastroenterite</option>
+        <option value="/Sintomi/Gastroenterite-virale">Gastroenterite virale</option>
+        <option value="/Sintomi/Geloni">Geloni</option>
+        <option value="/Sintomi/Gengivite">Gengivite</option>
+        <option value="/Sintomi/Giardiasi">Giardiasi</option>
+        <option value="/Sintomi/Ginocchio_valgo">Ginocchio valgo</option>
+        <option value="/Sintomi/Ginocchio_varo">Ginocchio varo</option>
+        <option value="/Sintomi/Giradito">Giradito</option>
+        <option value="/Sintomi/Glaucoma">Glaucoma</option>
+        <option value="/Sintomi/Gonartrosi">Gonartrosi</option>
+        <option value="/Sintomi/Gonorrea">Gonorrea</option>
+        <option value="/Sintomi/Gotta">Gotta</option>
+        <option value="/Sintomi/Gozzo_malattia">Gozzo</option>
+        <option value="/Sintomi/Granuloma_anulare">Granuloma anulare</option>
+        <option value="/Sintomi/Granuloma_piogenico">Granuloma piogenico</option>
+        <option value="/Sintomi/gravidanza">Gravidanza</option>
+        <option value="/Sintomi/Gravidanza_ectopica">Gravidanza ectopica</option>
+        <option value="/Sintomi/Herpes_genitale">Herpes genitale</option>
+        <option value="/Sintomi/Herpes-simple">Herpes simplex</option>
+        <option value="/Sintomi/Herpes_zoster_oftalmico">Herpes zoster oftalmico</option>
+        <option value="/Sintomi/Herpes_zoster_oticus">Herpes zoster oticus</option>
+        <option value="/Sintomi/Ictus">Ictus</option>
+        <option value="/Sintomi/Idrocele">Idrocele</option>
+        <option value="/Sintomi/Idronefrosi">Idronefrosi</option>
+        <option value="/Sintomi/Impetigine">Impetigine</option>
+        <option value="/Sintomi/Indigestione">Indigestione</option>
+        <option value="/Sintomi/Infarto_Intestinale">Infarto Intestinale</option>
+        <option value="/Sintomi/Infarto-miocardico">Infarto miocardico</option>
+        <option value="/Sintomi/Infarto_Polmonare">Infarto Polmonare</option>
+        <option value="/Sintomi/Infezione_cytomegalovirus">Infezione da cytomegalovirus (CMV)</option>
+        <option value="/Sintomi/Infezione_West_Nile_Virus">Infezione da virus West Nile</option>
+        <option value="/Sintomi/Infiammazione_trigemino">Infiammazione del nervo trigemino</option>
+        <option value="/Sintomi/Infiammazione_Tendine_Achille">Infiammazione Tendine d'Achille</option>
+        <option value="/Sintomi/Infuenza">Influenza</option>
+        <option value="/Sintomi/Ingestione_sostanze_caustiche">Ingestione di sostanze caustiche</option>
+        <option value="/Sintomi/Insufficienza_cardiaca">Insufficienza cardiaca</option>
+        <option value="/Sintomi/Insufficienza-renale">Insufficienza renale</option>
+        <option value="/Sintomi/Insufficienza_respiratoria">Insufficienza respiratoria</option>
+        <option value="/Sintomi/Insufficienza_surrenalica">Insufficienza surrenalica</option>
+        <option value="/Sintomi/Insulinoma">Insulinoma</option>
+        <option value="/Sintomi/Intertrigine">Intertrigine</option>
+        <option value="/Sintomi/Intolleranza-al-lattosio">Intolleranza al lattosio</option>
+        <option value="/Sintomi/Intolleranze_alimentari">Intolleranze alimentari</option>
+        <option value="/Sintomi/Intossicazione_monossido_carbonio">Intossicazione da monossido di carbonio</option>
+        <option value="/Sintomi/Iperemesi_gravidica">Iperemesi gravidica</option>
+        <option value="/Sintomi/Ipermetropia">Ipermetropia</option>
+        <option value="/Sintomi/Iperparatiroidismo">Iperparatiroidismo</option>
+        <option value="/Sintomi/Ipertensione">Ipertensione</option>
+        <option value="/Sintomi/Ipertensione_polmonare">Ipertensione polmonare</option>
+        <option value="/Sintomi/Ipertermia_maligna">Ipertermia maligna</option>
+        <option value="/Sintomi/Ipertiroidismo">Ipertiroidismo</option>
+        <option value="/Sintomi/Ipertrofia-prostatica-beningna">Ipertrofia prostatica beningna</option>
+        <option value="/Sintomi/Ipertrofia-ventricolare">Ipertrofia ventricolare</option>
+        <option value="/Sintomi/Ipocondria">Ipocondria</option>
+        <option value="/Sintomi/Ipogonadismo_maschile">Ipogonadismo maschile</option>
+        <option value="/Sintomi/Ipoparatiroidismo">Ipoparatiroidismo</option>
+        <option value="/Sintomi/Ipotiroidismo">Ipotiroidismo</option>
+        <option value="/Sintomi/Iridociclite">Iridociclite</option>
+        <option value="/Sintomi/Ischemia_cerebrale">Ischemia cerebrale</option>
+        <option value="/Sintomi/Istoplasmosi">Istoplasmosi</option>
+        <option value="/Sintomi/Ittiosi">Ittiosi</option>
+        <option value="/Sintomi/Jet_lag">Jet lag</option>
+        <option value="/Sintomi/Labbro_leporino">Labbro leporino</option>
+        <option value="/Sintomi/Labirintite">Labirintite</option>
+        <option value="/Sintomi/Laringite">Laringite</option>
+        <option value="/Sintomi/Lebbra">Lebbra</option>
+        <option value="/Sintomi/Legionellosi">Legionellosi</option>
+        <option value="/Sintomi/Leishmaniosi">Leishmaniosi</option>
+        <option value="/Sintomi/Leptospirosi">Leptospirosi</option>
+        <option value="/Sintomi/Leucemia">Leucemia</option>
+        <option value="/Sintomi/Lichen_planus">Lichen planus</option>
+        <option value="/Sintomi/Lichen_Simplex">Lichen Simplex</option>
+        <option value="/Sintomi/Linfogranuloma_venereo">Linfogranuloma venereo</option>
+        <option value="/Sintomi/Linfoma">Linfoma</option>
+        <option value="/Sintomi/Lipoma">Lipoma</option>
+        <option value="/Sintomi/Liposarcoma">Liposarcoma</option>
+        <option value="/Sintomi/Listeriosi">Listeriosi</option>
+        <option value="/Sintomi/Lupus_eritematoso_sistemico">Lupus eritematoso sistemico</option>
+        <option value="/Sintomi/Lussazione">Lussazione</option>
+        <option value="/Sintomi/Malaria">Malaria</option>
+        <option value="/Sintomi/Malattia_graffio_gatto">Malattia da graffio di gatto</option>
+        <option value="/Sintomi/Malattia_di_Chagas">Malattia di Chagas</option>
+        <option value="/Sintomi/Malattia_di_Creutzfeldt-Jakob">Malattia di Creutzfeldt-Jakob</option>
+        <option value="/Sintomi/Malattia_di_Gaucher">Malattia di Gaucher</option>
+        <option value="/Sintomi/Malattia_Huntington">Malattia di Huntington</option>
+        <option value="/Sintomi/Malattia_di_Kawasaki">Malattia di Kawasaki</option>
+        <option value="/Sintomi/Malattia_di_Lyme">Malattia di Lyme</option>
+        <option value="/Sintomi/Malattia_Paget_capezzolo">Malattia di Paget del capezzolo</option>
+        <option value="/Sintomi/Malattia_di_Peyronie">Malattia di Peyronie</option>
+        <option value="/Sintomi/Malattia_di_Von_Willebrand">Malattia di von Willebrand</option>
+        <option value="/Sintomi/Malattia_Whipple">Malattia di Whipple</option>
+        <option value="/Sintomi/Malattia_di_Wilson">Malattia di Wilson</option>
+        <option value="/Sintomi/Malattia-infiammatoria-pelvica">Malattia infiammatoria pelvica</option>
+        <option value="/Sintomi/Malattia_mano-piede-bocca">Malattia mano-piede-e-bocca</option>
+        <option value="/Sintomi/Mastite">Mastite</option>
+        <option value="/Sintomi/Mastoidite">Mastoidite</option>
+        <option value="/Sintomi/Megacolon_tossico">Megacolon tossico</option>
+        <option value="/Sintomi/Melanoma">Melanoma</option>
+        <option value="/Sintomi/Melioidosi">Melioidosi</option>
+        <option value="/Sintomi/Meningioma">Meningioma</option>
+        <option value="/Sintomi/Meningite">Meningite</option>
+        <option value="/Sintomi/Menopausa">Menopausa</option>
+        <option value="/Sintomi/Mesotelioma_pleurico">Mesotelioma pleurico</option>
+        <option value="/Sintomi/Miastenia_gravis">Miastenia gravis</option>
+        <option value="/Sintomi/Mielite">Mielite</option>
+        <option value="/Sintomi/Mielofibrosi">Mielofibrosi</option>
+        <option value="/Sintomi/Mieloma_multiplo">Mieloma multiplo</option>
+        <option value="/Sintomi/Mielopatia">Mielopatia</option>
+        <option value="/Sintomi/Miliaria">Miliaria</option>
+        <option value="/Sintomi/Miocardite">Miocardite</option>
+        <option value="/Sintomi/Miopia">Miopia</option>
+        <option value="/Sintomi/Miringite">Miringite</option>
+        <option value="/Sintomi/Mixoma">Mixoma</option>
+        <option value="/Sintomi/Mollusco_contagioso">Mollusco contagioso</option>
+        <option value="/Sintomi/Mononucleosi">Mononucleosi</option>
+        <option value="/Sintomi/Morbillo">Morbillo</option>
+        <option value="/Sintomi/Morbo-di-Addison">Morbo di Addison</option>
+        <option value="/Sintomi/Morbo-di-alzheimer">Morbo di Alzheimer</option>
+        <option value="/Sintomi/Morbo_Bowen">Morbo di Bowen</option>
+        <option value="/Sintomi/Morbo_di_Cooley">Morbo di Cooley</option>
+        <option value="/Sintomi/Morbo-di-crohn">Morbo di Crohn</option>
+        <option value="/Sintomi/Morbo_di_Cushing">Morbo di Cushing</option>
+        <option value="/Sintomi/Morbo_Dupuytren">Morbo di Dupuytren</option>
+        <option value="/Sintomi/Morbo-di-graves">Morbo di Graves - Basedow</option>
+        <option value="/Sintomi/Morbo-di-hashimoto">Morbo di Hashimoto</option>
+        <option value="/Sintomi/Morbo_di_Hirschsprung">Morbo di Hirschsprung</option>
+        <option value="/Sintomi/Morbo_di_Paget">Morbo di Paget</option>
+        <option value="/Sintomi/Morbo-di-parkinson">Morbo di Parkinson</option>
+        <option value="/Sintomi/Morbo_di_Scheuermann">Morbo di Scheuermann</option>
+        <option value="/Sintomi/Narcolessia">Narcolessia</option>
+        <option value="/Sintomi/Nefrite">Nefrite</option>
+        <option value="/Sintomi/Nefropatia_diabetica">Nefropatia Diabetica</option>
+        <option value="/Sintomi/Neurinoma_acustico">Neurinoma dell'acustico</option>
+        <option value="/Sintomi/Neurite_ottica">Neurite ottica</option>
+        <option value="/Sintomi/Neuroblastoma">Neuroblastoma</option>
+        <option value="/Sintomi/Neurofibromatosi">Neurofibromatosi</option>
+        <option value="/Sintomi/Neuroma_di_Morton">Neuroma di Morton</option>
+        <option value="/Sintomi/Neuronite_vestibolare">Neuronite vestibolare</option>
+        <option value="/Sintomi/Neuropatia_diabetica">Neuropatia diabetica</option>
+        <option value="/Sintomi/Nevi">Nevi</option>
+        <option value="/Sintomi/Nevo_di_Spitz">Nevo di Spitz</option>
+        <option value="/Sintomi/Noduli-della-tiroide">Noduli della tiroide</option>
+        <option value="/Sintomi/Obesita">Obesità</option>
+        <option value="/Sintomi/Occhio_di_Pernice">Occhio di pernice</option>
+        <option value="/Sintomi/Occlusione_intestinale">Occlusione intestinale</option>
+        <option value="/Sintomi/Onfalite">Onfalite</option>
+        <option value="/Sintomi/Onicofagia">Onicofagia</option>
+        <option value="/Sintomi/Onicomicosi">Onicomicosi</option>
+        <option value="/Sintomi/Orchite">Orchite</option>
+        <option value="/Sintomi/Orzaiolo">Orzaiolo</option>
+        <option value="/Sintomi/Ossiuriasi">Ossiuriasi</option>
+        <option value="/Sintomi/Osteite">Osteite</option>
+        <option value="/Sintomi/Osteocondrite">Osteocondrite</option>
+        <option value="/Sintomi/Osteocondrosi">Osteocondrosi</option>
+        <option value="/Sintomi/Osteogenesi_imperfetta">Osteogenesi imperfetta</option>
+        <option value="/Sintomi/Osteoma_osteoide">Osteoma osteoide</option>
+        <option value="/Sintomi/Osteomielite">Osteomielite</option>
+        <option value="/Sintomi/Osteonecrosi">Osteonecrosi</option>
+        <option value="/Sintomi/Osteopetrosi">Osteopetrosi</option>
+        <option value="/Sintomi/Osteoporosi_malattia">Osteoporosi</option>
+        <option value="/Sintomi/Osteosarcoma">Osteosarcoma</option>
+        <option value="/Sintomi/Ostruzione-intestinale">Ostruzione intestinale</option>
+        <option value="/Sintomi/Otite">Otite</option>
+        <option value="/Sintomi/Otite_barotraumatica">Otite barotraumatica</option>
+        <option value="/Sintomi/Otosclerosi">Otosclerosi</option>
+        <option value="/Sintomi/Ovulazione">Ovulazione</option>
+        <option value="/Sintomi/Palatoschisi">Palatoschisi</option>
+        <option value="/Sintomi/Pancreatite">Pancreatite</option>
+        <option value="/Sintomi/Pannicolite">Pannicolite</option>
+        <option value="/Sintomi/Parafimosi">Parafimosi</option>
+        <option value="/Sintomi/Paralisi_Cerebrale_Infantile">Paralisi Cerebrale Infantile</option>
+        <option value="/Sintomi/Paraparesi_Spastica">Paraparesi Spastica</option>
+        <option value="/Sintomi/Parodontite">Parodontite</option>
+        <option value="/Sintomi/Paronichia">Paronichia</option>
+        <option value="/Sintomi/Parotite">Parotite</option>
+        <option value="/Sintomi/Patereccio">Patereccio</option>
+        <option value="/Sintomi/Pediculosi">Pediculosi</option>
+        <option value="/Sintomi/Pellagra">Pellagra</option>
+        <option value="/Sintomi/Pemfigo_volgare">Pemfigo volgare</option>
+        <option value="/Sintomi/Pemfigoide_bolloso">Pemfigoide bolloso</option>
+        <option value="/Sintomi/Pemfigoide_gestazionale">Pemfigoide gestazionale</option>
+        <option value="/Sintomi/Pericardite">Pericardite</option>
+        <option value="/Sintomi/Peritonite">Peritonite</option>
+        <option value="/Sintomi/Pertosse">Pertosse</option>
+        <option value="/Sintomi/PFAPA">PFAPA</option>
+        <option value="/Sintomi/Piede_cavo">Piede cavo</option>
+        <option value="/Sintomi/Piede_atleta">Piede d'atleta</option>
+        <option value="/Sintomi/Piede_Diabetico">Piede Diabetico</option>
+        <option value="/Sintomi/Piede_piatto">Piede piatto</option>
+        <option value="/Sintomi/Pielonefrite">Pielonefrite</option>
+        <option value="/Sintomi/Pinguecola">Pinguecola</option>
+        <option value="/Sintomi/Pitiriasi_alba">Pitiriasi alba</option>
+        <option value="/Sintomi/Pitiriasi_rosea">Pitiriasi rosea</option>
+        <option value="/Sintomi/Placenta_Accreta">Placenta Accreta</option>
+        <option value="/Sintomi/Placenta_Previa">Placenta Previa</option>
+        <option value="/Sintomi/Pleurite">Pleurite</option>
+        <option value="/Sintomi/Policitemia_vera">Policitemia vera</option>
+        <option value="/Sintomi/Polidipsia_psicogena">Polidipsia psicogena</option>
+        <option value="/Sintomi/Polimialgia_reumatica">Polimialgia reumatica</option>
+        <option value="/Sintomi/Polimiosite">Polimiosite</option>
+        <option value="/Sintomi/Poliomelite">Poliomielite</option>
+        <option value="/Sintomi/Polipi-intestinali">Polipi intestinali</option>
+        <option value="/Sintomi/Polipi-uterini">Polipi uterini</option>
+        <option value="/Sintomi/Poliposi-nasale">Poliposi nasale</option>
+        <option value="/Sintomi/Polmonite">Polmonite</option>
+        <option value="/Sintomi/Polmonite_ab_ingestis">Polmonite ab ingestis</option>
+        <option value="/Sintomi/Porfiria">Porfiria</option>
+        <option value="/Sintomi/Porfiria_Cutanea_Tarda">Porfiria Cutanea Tarda</option>
+        <option value="/Sintomi/Pre-eclampsia">Pre-eclampsia</option>
+        <option value="/Sintomi/Presbiopia">Presbiopia</option>
+        <option value="/Sintomi/Proctite">Proctite</option>
+        <option value="/Sintomi/Progeria">Progeria</option>
+        <option value="/Sintomi/Prostatite">Prostatite</option>
+        <option value="/Sintomi/Psicosi_di_Korsakoff">Psicosi di Korsakoff</option>
+        <option value="/Sintomi/Psoriasi">Psoriasi</option>
+        <option value="/Sintomi/Pubalgia">Pubalgia</option>
+        <option value="/Sintomi/Pulpite">Pulpite</option>
+        <option value="/Sintomi/Rabbia">Rabbia</option>
+        <option value="/Sintomi/Radicolopatia">Radicolopatia</option>
+        <option value="/Sintomi/Raffreddore_Malattia">Raffreddore</option>
+        <option value="/Sintomi/Ragadi_anali">Ragadi anali</option>
+        <option value="/Sintomi/Reflusso-gastroesofageo">Reflusso gastroesofageo</option>
+        <option value="/Sintomi/Retinite_pigmentosa">Retinite pigmentosa</option>
+        <option value="/Sintomi/Retinoblastoma">Retinoblastoma</option>
+        <option value="/Sintomi/Retinopatia_diabetica">Retinopatia diabetica</option>
+        <option value="/Sintomi/Rinite">Rinite</option>
+        <option value="/Sintomi/Rinite_allergica">Rinite allergica</option>
+        <option value="/Sintomi/Rizoartrosi">Rizoartrosi</option>
+        <option value="/Sintomi/Rosacea">Rosacea</option>
+        <option value="/Sintomi/Rosolia">Rosolia</option>
+        <option value="/Sintomi/Sacroileite">Sacroileite</option>
+        <option value="/Sintomi/Salmonella">Salmonella</option>
+        <option value="/Sintomi/Salpingite">Salpingite</option>
+        <option value="/Sintomi/Sarcoma_di_Kaposi">Sarcoma di Kaposi</option>
+        <option value="/Sintomi/Scabbia">Scabbia</option>
+        <option value="/Sintomi/Scarlattina">Scarlattina</option>
+        <option value="/Sintomi/Schistosomiasi">Schistosomiasi</option>
+        <option value="/Sintomi/Schizofrenia">Schizofrenia</option>
+        <option value="/Sintomi/Scialoadenite">Scialoadenite</option>
+        <option value="/Sintomi/Sclerite">Sclerite</option>
+        <option value="/Sintomi/Sclerodermia">Sclerodermia</option>
+        <option value="/Sintomi/Sclerosi_laterale_amiotrofica">Sclerosi laterale amiotrofica</option>
+        <option value="/Sintomi/Sclerosi-multipla">Sclerosi multipla</option>
+        <option value="/Sintomi/Sclerosi_Tuberosa">Sclerosi Tuberosa</option>
+        <option value="/Sintomi/Scompenso_cardiaco">Scompenso cardiaco</option>
+        <option value="/Sintomi/Scorbuto">Scorbuto</option>
+        <option value="/Sintomi/Sepsi">Sepsi</option>
+        <option value="/Sintomi/Sesta_malattia">Sesta malattia</option>
+        <option value="/Sintomi/Sferocitosi">Sferocitosi</option>
+        <option value="/Sintomi/Shigellosi">Shigellosi</option>
+        <option value="/Sintomi/Shock_settico">Shock settico</option>
+        <option value="/Sintomi/Sifilide">Sifilide</option>
+        <option value="/Sintomi/Silicosi">Silicosi</option>
+        <option value="/Sintomi/Sindrome_compartimentale">Sindrome compartimentale</option>
+        <option value="/Sintomi/Sindrome_aspirazione_meconio">Sindrome da aspirazione di meconio</option>
+        <option value="/Sintomi/Sindrome_da_decompressione">Sindrome da decompressione</option>
+        <option value="/Sintomi/Sindrome_deficit_attenzione_iperattivita">Sindrome da deficit di attenzione e iperattività (ADHD)</option>
+        <option value="/Sintomi/Sindrome_da_stanchezza_cronica">Sindrome da stanchezza cronica</option>
+        <option value="/Sintomi/Sindrome_del_piriforme">Sindrome del piriforme</option>
+        <option value="/Sintomi/Sindrome_tunnel_carpale">Sindrome del tunnel carpale</option>
+        <option value="/Sintomi/Sindrome-dell-intestino-irritabile">Sindrome dell'intestino irritabile</option>
+        <option value="/Sintomi/Sindrome_occhio_secco">Sindrome dell'occhio secco</option>
+        <option value="/Sintomi/Sindrome-dell-ovaio-policistico">Sindrome dell'ovaio policistico</option>
+        <option value="/Sintomi/Sindrome_della_Bocca_Urente">Sindrome della Bocca Urente</option>
+        <option value="/Sintomi/Sindrome_Cauda_Equina">Sindrome della Cauda Equina</option>
+        <option value="/Sintomi/Sindrome_gambe_senza_riposo">Sindrome delle gambe senza riposo</option>
+        <option value="/Sintomi/Sindrome_dello_stretto_toracico">Sindrome dello stretto toracico</option>
+        <option value="/Sintomi/Sindrome_di_Asperger">Sindrome di Asperger</option>
+        <option value="/Sintomi/Sindrome_di_Brugada">Sindrome di Brugada</option>
+        <option value="/Sintomi/Sindrome_De_Quervain">Sindrome di De Quervain</option>
+        <option value="/Sintomi/Sindrome_di_Down">Sindrome di Down</option>
+        <option value="/Sintomi/Sindrome_Ehlers-Danlos">Sindrome di Ehlers-Danlos</option>
+        <option value="/Sintomi/Sindrome_di_Fanconi">Sindrome di Fanconi</option>
+        <option value="/Sintomi/Sindrome_Horner">Sindrome di Horner</option>
+        <option value="/Sintomi/Sindrome_di_Klinefelter">Sindrome di Klinefelter</option>
+        <option value="/Sintomi/Sindrome-Mallory-Weiss">Sindrome di Mallory-Weiss</option>
+        <option value="/Sintomi/Sindrome_di_Marfan">Sindrome di Marfan</option>
+        <option value="/Sintomi/Sindrome_di_Meniere">Sindrome di Ménière</option>
+        <option value="/Sintomi/Sindrome_di_Pickwick">Sindrome di Pickwick</option>
+        <option value="/Sintomi/Sindrome_Prader-Willi">Sindrome di Prader-Willi</option>
+        <option value="/Sintomi/Sindrome_di_Reiter">Sindrome di Reiter</option>
+        <option value="/Sintomi/Sindrome_di_Reye">Sindrome di Reye</option>
+        <option value="/Sintomi/Sindrome_Sjogren">Sindrome di Sjögren</option>
+        <option value="/Sintomi/Sindrome_di_Tourette">Sindrome di Tourette</option>
+        <option value="/Sintomi/Sindrome_di_Turner">Sindrome di Turner</option>
+        <option value="/Sintomi/Sindrome_di_Zollinger-Ellison">Sindrome di Zollinger-Ellison</option>
+        <option value="/Sintomi/Sindrome_emolitico-uremica">Sindrome emolitico-uremica</option>
+        <option value="/Sintomi/Sindrome_feto-alcolica">Sindrome feto-alcolica</option>
+        <option value="/Sintomi/Fibromialgia">Sindrome fibromialgica</option>
+        <option value="/Sintomi/Sindrome_metabolica">Sindrome metabolica</option>
+        <option value="/Sintomi/Sindrome_premestruale">Sindrome premestruale</option>
+        <option value="/Sintomi/Sindrome_Serotoninergica">Sindrome Serotoninergica</option>
+        <option value="/Sintomi/Sindromi_parainfluenzali">Sindromi parainfluenzali</option>
+        <option value="/Sintomi/Sinovite">Sinovite</option>
+        <option value="/Sintomi/Sinusite">Sinusite</option>
+        <option value="/Sintomi/Siringomielia">Siringomielia</option>
+        <option value="/Sintomi/Spalla_congelata">Spalla congelata</option>
+        <option value="/Sintomi/Spasmo_esofageo">Spasmo esofageo</option>
+        <option value="/Sintomi/Sperone_calcaneare">Sperone calcaneare</option>
+        <option value="/Sintomi/Spina_bifida">Spina bifida</option>
+        <option value="/Sintomi/Spina_calcaneare">Spina calcaneare</option>
+        <option value="/Sintomi/Spondilite_anchilosante">Spondilite anchilosante</option>
+        <option value="/Sintomi/Spondilolistesi">Spondilolistesi</option>
+        <option value="/Sintomi/Spondilosi_cervicale">Spondilosi cervicale</option>
+        <option value="/Sintomi/Sprue_tropicale">Sprue tropicale</option>
+        <option value="/Sintomi/Steatosi-epatica">Steatosi epatica</option>
+        <option value="/Sintomi/Steatosi_epatica_non_alcolica">Steatosi epatica non alcolica</option>
+        <option value="/Sintomi/Stenosi_Cervicale">Stenosi Cervicale</option>
+        <option value="/Sintomi/Stenosi_Lombare">Stenosi Lombare</option>
+        <option value="/Sintomi/Stenosi_Pilorica">Stenosi Pilorica</option>
+        <option value="/Sintomi/Stenosi_Spinale">Stenosi Spinale</option>
+        <option value="/Sintomi/Stenosi_uretrale">Stenosi uretrale</option>
+        <option value="/Sintomi/Stiramento_Muscolare">Stiramento Muscolare</option>
+        <option value="/Sintomi/Stitichezza">Stitichezza</option>
+        <option value="/Sintomi/Strabismo">Strabismo</option>
+        <option value="/Sintomi/Strappo_Muscolare">Strappo Muscolare</option>
+        <option value="/Sintomi/Talassemie">Talassemie</option>
+        <option value="/Sintomi/Tallonite">Tallonite</option>
+        <option value="/Sintomi/Tendinite">Tendinite</option>
+        <option value="/Sintomi/Tenosinovite">Tenosinovite</option>
+        <option value="/Sintomi/Tetano">Tetano</option>
+        <option value="/Sintomi/Tifo">Tifo</option>
+        <option value="/Sintomi/Timoma">Timoma</option>
+        <option value="/Sintomi/Tinea_capitis">Tinea capitis</option>
+        <option value="/Sintomi/Tinea_versicolor">Tinea versicolor</option>
+        <option value="/Sintomi/Tiroidite_subacuta">Tiroidite subacuta</option>
+        <option value="/Sintomi/Tonsillite">Tonsillite</option>
+        <option value="/Sintomi/Torsione_annessiale">Torsione annessiale</option>
+        <option value="/Sintomi/Torsione_testicolare">Torsione testicolare</option>
+        <option value="/Sintomi/Toxoplasmosi">Toxoplasmosi</option>
+        <option value="/Sintomi/Tracheite_malattia">Tracheite</option>
+        <option value="/Sintomi/Tracoma">Tracoma</option>
+        <option value="/Sintomi/Trichinosi">Trichinosi</option>
+        <option value="/Sintomi/Trichomonas">Trichomonas</option>
+        <option value="/Sintomi/Tripanosomiasi_africana">Tripanosomiasi africana</option>
+        <option value="/Sintomi/Trisomia_13">Trisomia 13</option>
+        <option value="/Sintomi/Trisomia_18">Trisomia 18</option>
+        <option value="/Sintomi/Trombocitemia_Essenziale">Trombocitemia Essenziale</option>
+        <option value="/Sintomi/Tromboflebite">Tromboflebite</option>
+        <option value="/Sintomi/Trombosi-venosa-profonda">Trombosi venosa profonda</option>
+        <option value="/Sintomi/Tubercolosi">Tubercolosi</option>
+        <option value="/Sintomi/Tumore_testicoli">Tumore ai testicoli</option>
+        <option value="/Sintomi/Tumore-al-fegato">Tumore al fegato</option>
+        <option value="/Sintomi/Tumore-al-pancreas">Tumore al pancreas</option>
+        <option value="/Sintomi/Tumore-al-polmone">Tumore al polmone</option>
+        <option value="/Sintomi/Tumore-al-rene">Tumore al rene</option>
+        <option value="/Sintomi/Tumore-allo-stomaco">Tumore allo stomaco</option>
+        <option value="/Sintomi/Tumore-colon-retto">Tumore del colon-retto</option>
+        <option value="/Sintomi/Tumore_pene">Tumore del pene</option>
+        <option value="/Sintomi/Tumore_ano">Tumore dell'ano</option>
+        <option value="/Sintomi/Tumore-dell-esofago">Tumore dell'esofago</option>
+        <option value="/Sintomi/Tumore-dellovaio">Tumore dell'ovaio</option>
+        <option value="/Sintomi/Tumore_uretra">Tumore dell'uretra</option>
+        <option value="/Sintomi/Tumore-della-tiroide">Tumore della tiroide</option>
+        <option value="/Sintomi/Tumore_ghiandole_salivari">Tumore delle ghiandole salivari</option>
+        <option value="/Sintomi/Tumore_di_Wilms">Tumore di Wilms</option>
+        <option value="/Sintomi/Tumori_cardiaci">Tumori cardiaci</option>
+        <option value="/Sintomi/Tumori_midollo_spinale">Tumori del midollo spinale</option>
+        <option value="/Sintomi/Tumori_della_laringe">Tumori della laringe</option>
+        <option value="/Sintomi/Tumori_ipofisari">Tumori ipofisari</option>
+        <option value="/Sintomi/Ulcera_corneale">Ulcera corneale</option>
+        <option value="/Sintomi/Ulcera_duodenale">Ulcera duodenale</option>
+        <option value="/Sintomi/Ulcera_gastrica">Ulcera gastrica</option>
+        <option value="/Sintomi/Ulcera-peptica">Ulcera peptica</option>
+        <option value="/Sintomi/Unghia_incarnita">Unghia incarnita</option>
+        <option value="/Sintomi/Uretrite">Uretrite</option>
+        <option value="/Sintomi/Ustioni">Ustioni</option>
+        <option value="/Sintomi/Uveite">Uveite</option>
+        <option value="/Sintomi/Vaginite">Vaginite</option>
+        <option value="/Sintomi/Vaginosi">Vaginosi</option>
+        <option value="/Sintomi/Vaiolo">Vaiolo</option>
+        <option value="/Sintomi/Varicella">Varicella</option>
+        <option value="/Sintomi/Varici_esofagee">Varici esofagee</option>
+        <option value="/Sintomi/Varicocele">Varicocele</option>
+        <option value="/Sintomi/Vene-varicose">Vene varicose</option>
+        <option value="/Sintomi/Verruche">Verruche</option>
+        <option value="/Sintomi/Vescica_neurologica">Vescica neurologica</option>
+        <option value="/Sintomi/Virus_Zika">Virus Zika</option>
+        <option value="/Sintomi/Vitiligine">Vitiligine</option>
+		</select>
+		</div>
+		<!-- ------------------------------------------------------------------------------------------- -->
 	</body>
 </html>
